@@ -22,4 +22,11 @@ public class TestServiceImpl implements TestService {
 
         return testRepository.findAll();
     }
+
+    @Override
+    public Test findById(int id) {
+        return testRepository.getOne(id);
+    }
+
+
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.jackson.Jacksonized;
 
 import javax.persistence.*;
 
@@ -21,4 +22,5 @@ public class Test {
     public int id;
     public String username;
     public String content;
+
 }

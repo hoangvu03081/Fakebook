@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface TestService {
     List<Test> findAll();
-
+    Test findById(int id);
 }
