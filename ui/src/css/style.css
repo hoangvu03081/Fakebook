@@ -1,0 +1,67 @@
+img {
+  min-height: 100%;
+  object-fit: cover;
+}
+
+.boxShadow {
+  box-shadow: 0 0 15px 0 rgba(255, 255, 255, 0.4);
+}
+
+.register-form, .login-form {
+  width: 768px;
+  color: #fff;
+  border-radius: 10px;
+}
+.register-form .heading, .login-form .heading {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(16, 54, 19, 0.3);
+  border-radius: 10px;
+}
+.register-form img, .login-form img {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.register-form input, .login-form input {
+  color: #fff;
+  background-color: transparent;
+  border-color: transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.4);
+}
+.register-form input:focus, .login-form input:focus {
+  color: #fff;
+  border-color: transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.4);
+  background-color: transparent;
+  box-shadow: 0 5px 6px -3px rgba(255, 255, 255, 0.4), 0 7px 5px -10px rgba(255, 255, 255, 0.4), 0 8px 5px -10px rgba(255, 255, 255, 0.4), 0 8px 5px -10px rgba(255, 255, 255, 0.4);
+}
+.register-form input::placeholder, .login-form input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.register-form form, .login-form form {
+  padding: 30px;
+  height: 512px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.register-form form label, .login-form form label {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+}
+.register-form form button, .login-form form button {
+  font-weight: 400;
+  font-size: 20px;
+}
+.register-form .btn.text-secondary:hover, .login-form .btn.text-secondary:hover {
+  color: #fff !important;
+}
+
+.login-form form {
+  height: 307.2px;
+}
+
+/*# sourceMappingURL=style.css.map */
