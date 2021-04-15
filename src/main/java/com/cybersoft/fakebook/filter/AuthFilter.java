@@ -26,19 +26,16 @@ public class AuthFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-
         String authorizationHeader = request.getHeader("Authorization");
-
         if(authorizationHeader!=null && !authorizationHeader.isEmpty()) {
             String token = authorizationHeader.replace("Bearer","");
-            System.out.println("yes");
-            String email = Jwts.parser()
-                    .setSigningKey("KEYVALUE")
+            String username = Jwts.parser()
+                    .setSigningKey("markzuckervu")
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);

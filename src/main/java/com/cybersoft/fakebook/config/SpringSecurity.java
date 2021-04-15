@@ -20,8 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan("com.cybersoft")
-@Order(value = 1)
+@ComponentScan("com.cybersoft.fakebook")
 public class SpringSecurity extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
@@ -48,12 +47,12 @@ public class SpringSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .antMatcher("/api/user/**")
+        http.cors().and().csrf().disable()
+                .antMatcher("/api/**")
                 .authorizeRequests()
-                .antMatchers("/api/**")
+                .antMatchers("/api/auth/**")
                 .permitAll()
-                .antMatchers("/api/user/**")
+                .antMatchers("/api/**")
                 .hasAnyRole("USER")
                 .anyRequest()
                 .authenticated();
@@ -72,4 +71,6 @@ public class SpringSecurity extends WebSecurityConfigurerAdapter {
                         "/swagger-ui.html",
                         "/webjars/**");
     }
+
+
 }
