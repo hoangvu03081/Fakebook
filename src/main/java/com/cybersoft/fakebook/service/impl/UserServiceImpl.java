@@ -34,6 +34,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int checkExistingUser(UserDto userDto) {
+        int errorType=0;
+        if(userRepository.findOneByUsername(userDto.getUsername())!=null)
+            errorType+=1;
+        if(!userRepository.findUsersByEmail(userDto.getEmail()).isEmpty())
+            errorType+=2;
+        return errorType;
+    }
+
+    @Override
     public boolean addUser(UserDto dto) {
         User entity = new User(dto);
         entity.setPassword(BCrypt.hashpw(entity.getPassword(),BCrypt.gensalt()));

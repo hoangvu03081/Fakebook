@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.naming.AuthenticationException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/auth")
@@ -28,6 +30,18 @@ public class AuthController {
     @PostMapping("register")
     public Object post(@RequestBody UserDto userDto) {
         try {
+            List<String> errorList = new ArrayList<String>();
+            int checkExist = userService.checkExistingUser(userDto);
+            if(checkExist==1)
+                errorList.add(new String("Username already existed"));
+            if(checkExist==2)
+                errorList.add(new String("Email already existed"));
+            if(checkExist==3){
+                errorList.add(new String("Username already existed"));
+                errorList.add(new String("Email already existed"));
+            }
+            if(!errorList.isEmpty())
+                return new ResponseEntity<Object>(errorList,HttpStatus.BAD_REQUEST);
             userService.addUser(userDto);
             return new ResponseEntity(HttpStatus.ACCEPTED);
         } catch (Exception e) {
