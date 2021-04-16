@@ -9,6 +9,7 @@ public interface UserService {
     User getUserById(long id);
     User getUserByUsername(String username);
     List<User> getAllUser();
+    int checkExistingUser(UserDto userDto);
     boolean addUser(UserDto dto);
     boolean deleteUserById(long id);
     boolean updateUser(UserDto dto);
