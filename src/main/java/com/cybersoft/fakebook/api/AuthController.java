@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/auth")
@@ -28,15 +30,15 @@ public class AuthController {
     @PostMapping("register")
     public Object post(@RequestBody UserDto userDto) {
         try {
-            List<String> errorList = new ArrayList<String>();
+            Map<String,String> errorList = new HashMap<String,String>();
             int checkExist = userService.checkExistingUser(userDto);
             if(checkExist==1)
-                errorList.add(new String("Username already existed"));
+                errorList.put("username:","username already exists");
             if(checkExist==2)
-                errorList.add(new String("Email already existed"));
+                errorList.put("email:","email already exists");
             if(checkExist==3){
-                errorList.add(new String("Username already existed"));
-                errorList.add(new String("Email already existed"));
+                errorList.put("username:","username already exists");
+                errorList.put("email:","email already exists");
             }
             if(!errorList.isEmpty())
                 return new ResponseEntity<Object>(errorList,HttpStatus.BAD_REQUEST);
