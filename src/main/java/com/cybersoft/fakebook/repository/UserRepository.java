@@ -1,5 +1,6 @@
 package com.cybersoft.fakebook.repository;
 
+import com.cybersoft.fakebook.dto.FriendshipDto;
 import com.cybersoft.fakebook.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,5 +19,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     int findIdByUsername(@Param("username") String username);
 
     List<User> findUsersByEmail(String email);
+
+
 
 }

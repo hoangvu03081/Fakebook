@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface FriendshipService {
     List<FriendshipDto> getAllFriends();
+    List<FriendshipDto> getSuggestFriends();
     boolean deleteFriendship(long id);
     boolean requestFriendship(long id);
     boolean acceptFriendship(long id);

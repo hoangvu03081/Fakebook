@@ -25,6 +25,16 @@ public class FriendshipController {
         return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping("suggest")
+    public Object getSuggestFriendList(){
+        try {
+            return new ResponseEntity<Object>(friendshipService.getSuggestFriends(),HttpStatus.OK);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+    }
+
     @PutMapping("accept/{id}")
     public Object acceptRequest(@PathVariable String id){
         try {
