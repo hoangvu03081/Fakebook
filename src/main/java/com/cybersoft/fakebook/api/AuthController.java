@@ -6,23 +6,21 @@ import com.cybersoft.fakebook.service.AuthService;
 import com.cybersoft.fakebook.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
 
 @RestController
 @RequestMapping("api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     private AuthService authService;
     private UserService userService;
 
-    public AuthController(AuthService authService, UserService userService){
-        this.authService=authService;
-        this.userService=userService;
+    public AuthController(AuthService authService, UserService userService) {
+        this.authService = authService;
+        this.userService = userService;
     }
 
     @PostMapping("register")
@@ -37,11 +35,11 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public Object login(@RequestBody LoginDto loginDto){
+    public Object login(@RequestBody LoginDto loginDto) {
         try {
             String token = authService.login(loginDto);
             return new ResponseEntity<Object>(token, HttpStatus.OK);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
