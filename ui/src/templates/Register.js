@@ -6,7 +6,7 @@ export default function Register({ Component, bgColor, ...props }) {
     <Route
       {...props}
       render={(propsRoute) => (
-        <div className="container-fluid bg-dark" style={{backgroundColor: bgColor}}>
+        <div className="container-fluid" style={{backgroundColor: bgColor}}>
           <Component {...propsRoute} />
         </div>
       )}
