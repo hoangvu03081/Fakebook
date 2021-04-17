@@ -28,6 +28,24 @@ public class User {
     private LocalDate dob;
     private String avatar;
 
+
+    @ManyToMany
+    @JoinTable(name="friendship",
+            joinColumns=@JoinColumn(name="receiver_id"),
+            inverseJoinColumns=@JoinColumn(name="requester_id")
+    )
+    private List<User> friends;
+
+    @ManyToMany
+    @JoinTable(name="friendship",
+            joinColumns=@JoinColumn(name="requester_id"),
+            inverseJoinColumns=@JoinColumn(name="receiver_id")
+    )
+    private List<User> friendOf;
+
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private List<Post> post;
+
     public User(UserDto userDto){
         this.id=userDto.getId();
         this.username=userDto.getUsername();

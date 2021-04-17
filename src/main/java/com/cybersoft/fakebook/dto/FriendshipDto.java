@@ -11,5 +11,6 @@ import lombok.*;
 public class FriendshipDto {
     private long id;
     private String username;
+    private String name;
     private String avatar;
 }

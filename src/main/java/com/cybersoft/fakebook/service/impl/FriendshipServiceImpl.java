@@ -32,11 +32,6 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     public List<FriendshipDto> getAllFriends() {
-        if(SecurityContextHolder.getContext()==null)
-            System.out.println("getContext()");
-        else if(SecurityContextHolder.getContext().getAuthentication()==null)
-            System.out.println("getContext().getAuthentication()");
-        else System.out.println("getContext().getAuthentication().getPrincipal()");
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails)
@@ -52,7 +47,26 @@ public class FriendshipServiceImpl implements FriendshipService {
                 temp=userRepository.findById(idTemp);
             else temp=userRepository.findById(x.getFriendshipId().getRequesterId());
             if(temp.isPresent())
-                friends.add(new FriendshipDto(temp.get().getId(),temp.get().getUsername(),temp.get().getAvatar()));
+                friends.add(new FriendshipDto(temp.get().getId(),temp.get().getUsername(),temp.get().getName(),temp.get().getAvatar()));
+        }
+        return friends;
+    }
+
+    @Override
+    public List<FriendshipDto> getSuggestFriends() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails)
+            username = ((UserDetails)principal).getUsername();
+        else username = principal.toString();
+        long id = userRepository.findIdByUsername(username);
+        List<Long> friendsId=friendshipRepository.findNotFriendsId(id);
+        if(friendsId.isEmpty())
+            return new ArrayList<FriendshipDto>();
+        List<User> userList = userRepository.findAllById(friendsId);
+        List<FriendshipDto> friends = new ArrayList<FriendshipDto>();
+        for(User temp : userList){
+            friends.add(new FriendshipDto(temp.getId(),temp.getUsername(),temp.getName(),temp.getAvatar()));
         }
         return friends;
     }
@@ -92,5 +106,10 @@ public class FriendshipServiceImpl implements FriendshipService {
         long receiverId = userRepository.findIdByUsername(username);
         friendshipRepository.acceptFriendship(id,receiverId);
         return true;
+    }
+
+    public List<FriendshipDto> recommendFriend(){
+
+        return null;
     }
 }
