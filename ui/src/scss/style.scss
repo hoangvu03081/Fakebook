@@ -1,5 +1,6 @@
+@import "../../node_modules/bootstrap/scss/bootstrap";
 @import "./Helpers/variables";
 @import "./Helpers/mixins";
 @import "./Bases/normalized";
-@import "../../node_modules/carbon-components/scss/globals/scss/styles.scss";
+@import "./Components/button";
 @import "./Pages/register-login-form";
