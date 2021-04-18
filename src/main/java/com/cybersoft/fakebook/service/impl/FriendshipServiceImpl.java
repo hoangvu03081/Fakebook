@@ -72,6 +72,29 @@ public class FriendshipServiceImpl implements FriendshipService {
     }
 
     @Override
+    public List<FriendshipDto> getFriendshipRequest() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails)
+            username = ((UserDetails)principal).getUsername();
+        else username = principal.toString();
+        long id = userRepository.findIdByUsername(username);
+        List<Long> friendsId=friendshipRepository.findNotFriendsId(id);
+
+        List<Friendship> userList = friendshipRepository.getAllFriendshipRequest(id);
+        List<FriendshipDto> friends = new ArrayList<FriendshipDto>();
+        for(Friendship x : userList){
+            Optional<User> temp;
+            temp=userRepository.findById(x.getFriendshipId().getRequesterId());
+            if(temp.isPresent())
+                friends.add(new FriendshipDto(temp.get().getId(),temp.get().getUsername(),temp.get().getName(),temp.get().getAvatar()));
+        }
+        return friends;
+
+
+    }
+
+    @Override
     public boolean deleteFriendship(long id) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
