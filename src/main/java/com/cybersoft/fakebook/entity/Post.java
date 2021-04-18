@@ -1,5 +1,6 @@
 package com.cybersoft.fakebook.entity;
 
+import com.cybersoft.fakebook.dto.PostDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Getter
@@ -31,4 +33,15 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",updatable = false,insertable = false)
     private User user;
+
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
+    private List<PostImage> postImage;
+
+    public Post(PostDto postDto){
+        this.id=postDto.getId();
+        this.content=postDto.getContent();
+        this.likes=postDto.getLikes();
+        this.userId=postDto.getUserId();
+        this.uploadTime=postDto.getUploadTime();
+    }
 }
