@@ -37,7 +37,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void saveAvatar(byte[] bytes, String imageName) {
+    public long saveAvatar(byte[] bytes, String imageName) {
         try{
             String directory = Paths.get("").toAbsolutePath().toString();
             System.out.println("directory: "+directory);
@@ -59,8 +59,10 @@ public class ImageServiceImpl implements ImageService {
             User user = userRepository.findOneByUsername(username);
             user.setAvatar(String.valueOf(id));
             userRepository.save(user);
+            return id;
         } catch (Exception e){
             e.printStackTrace();
+            return -1;
         }
     }
 

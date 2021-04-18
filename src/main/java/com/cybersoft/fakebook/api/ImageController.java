@@ -25,8 +25,7 @@ public class ImageController {
     @PostMapping(value="avatar/upload", consumes = "multipart/form-data")
     public Object uploadAvatar(@RequestParam("file")MultipartFile file){
         try{
-            imageService.saveAvatar(file.getBytes(), file.getOriginalFilename());
-            return new ResponseEntity<Object>(HttpStatus.CREATED);
+            return new ResponseEntity<Object>(imageService.saveAvatar(file.getBytes(), file.getOriginalFilename()),HttpStatus.CREATED);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
