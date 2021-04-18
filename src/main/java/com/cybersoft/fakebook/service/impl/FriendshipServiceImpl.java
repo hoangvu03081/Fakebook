@@ -2,9 +2,8 @@ package com.cybersoft.fakebook.service.impl;
 
 import com.cybersoft.fakebook.dto.FriendshipDto;
 import com.cybersoft.fakebook.dto.UserDto;
-import com.cybersoft.fakebook.entity.Friendship;
-import com.cybersoft.fakebook.entity.FriendshipId;
-import com.cybersoft.fakebook.entity.User;
+import com.cybersoft.fakebook.entity.*;
+import com.cybersoft.fakebook.repository.FollowRepository;
 import com.cybersoft.fakebook.repository.FriendshipRepository;
 import com.cybersoft.fakebook.repository.UserRepository;
 import com.cybersoft.fakebook.service.FriendshipService;
@@ -24,10 +23,12 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     private FriendshipRepository friendshipRepository;
     private UserRepository userRepository;
+    private FollowRepository followRepository;
 
-    public FriendshipServiceImpl(FriendshipRepository friendshipRepository, UserRepository userRepository){
+    public FriendshipServiceImpl(FriendshipRepository friendshipRepository, UserRepository userRepository,FollowRepository followRepository){
         this.friendshipRepository=friendshipRepository;
         this.userRepository=userRepository;
+        this.followRepository=followRepository;
     }
 
     @Override
@@ -116,6 +117,9 @@ public class FriendshipServiceImpl implements FriendshipService {
         long requesterId = userRepository.findIdByUsername(username);
         FriendshipId friendshipId = new FriendshipId(requesterId,id);
         friendshipRepository.save(new Friendship(friendshipId,0));
+        FollowId followId = new FollowId(requesterId,id);
+        followRepository.save(new Follow(followId));
+
         return true;
     }
 
@@ -128,11 +132,11 @@ public class FriendshipServiceImpl implements FriendshipService {
         else username = principal.toString();
         long receiverId = userRepository.findIdByUsername(username);
         friendshipRepository.acceptFriendship(id,receiverId);
+        FollowId followId1 = new FollowId(receiverId,id);
+        FollowId followId2 = new FollowId(id,receiverId);
+        followRepository.save(new Follow(followId1));
+        followRepository.save(new Follow(followId2));
         return true;
     }
 
-    public List<FriendshipDto> recommendFriend(){
-
-        return null;
-    }
 }

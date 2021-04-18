@@ -1,5 +1,6 @@
 package com.cybersoft.fakebook.dto;
 
+import com.cybersoft.fakebook.entity.Post;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,4 +16,12 @@ public class PostDto {
     private int likes;
     private long userId;
     private LocalDateTime uploadTime;
+
+    public PostDto(Post post){
+        this.id=post.getId();
+        this.content=post.getContent();
+        this.likes=post.getLikes();
+        this.userId=post.getUserId();
+        this.uploadTime=post.getUploadTime();
+    }
 }
