@@ -43,6 +43,18 @@ public class User {
     )
     private List<User> friendOf;
 
+    @ManyToMany
+    @JoinTable(name = "follow",
+            joinColumns = @JoinColumn(name="follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "target_id"))
+    private List<User> follows;
+
+    @ManyToMany
+    @JoinTable(name = "follow",
+            joinColumns = @JoinColumn(name="target_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id"))
+    private List<User> followers;
+
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Post> post;
 

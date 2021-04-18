@@ -19,4 +19,5 @@ import javax.persistence.Table;
 public class Follow {
     @EmbeddedId
     private FollowId followId;
+
 }
