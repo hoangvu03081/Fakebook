@@ -1,23 +1,29 @@
-import {
-  DatePicker,
-  DatePickerInput,
-  TooltipIcon,
-} from "carbon-components-react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useFormik } from "formik";
-import { MisuseOutline32 } from "@carbon/icons-react";
 import * as yup from "yup";
 import axios from "axios";
 import React, { useRef } from "react";
-import { domain } from "../../configs/constants";
-import { history } from "../..";
-import { MySwal } from "../../components/Swal/Swal";
+import { TooltipIcon } from "../../../components/Tooltip/Tooltip";
+import { BiError } from "react-icons/bi";
+import { register } from "../userSlice";
+import { useDispatch } from "react-redux";
+
+export const registerToolTipStyles = {
+  position: "absolute",
+  borderRadius: "50%",
+  right: 0,
+  bottom: 18,
+  height: 37,
+  width: 37,
+};
 
 export default function Register() {
-  const ref = useRef(null);
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
-      dob: "",
+      dob: null,
       email: "",
       name: "",
       password: "",
@@ -30,36 +36,24 @@ export default function Register() {
       password: yup.string().required("Password is required"),
       // .min(8, "Password must be at least 8 characters")
       // .matches(/[0-9]/, "Password must have at least one number")
-      // .matches(/[A-Za-z]/, "Password must have at least one letter")
+      // .matches(/[A-Za-z] /, "Password must have at least one letter")
       username: yup.string().required("Username is required"),
       // .min(5)
     }),
     onSubmit: (values) => {
-      const y = values.dob.slice(6);
-      const m = values.dob.slice(3, 5);
-      const d = values.dob.slice(0, 2);
+      const y = values.dob.getFullYear();
+      let m = values.dob.getMonth();
+      m = m < 10 ? "0" + m : m;
+      let d = values.dob.getDate();
+      d = d < 10 ? "0" + d : d;
       const dob = `${y}-${m}-${d}`;
-
-      console.log({ ...values, dob });
-      axios
-        .post(`${domain}/api/auth/register`, {
+      
+      dispatch(
+        register({
           ...values,
           dob,
-          avatar: "",
-          id: 0,
         })
-        .then((result) => {
-          MySwal.fire({
-            title: "Register success!",
-            text:
-              "Welcome to Fakebook. The social is waiting for you, login now!!!",
-            confirmButtonColor: "#3085d6",
-            icon: "success",
-            confirmButtonText: "Go to Login",
-          }).then((res) => {
-            if (res.isConfirmed) history.push("/login");
-          });
-        });
+      );
     },
   });
 
@@ -96,13 +90,12 @@ export default function Register() {
             />
             {touched.name && errors.name && (
               <TooltipIcon
-                className="position-absolute fill-danger"
-                style={{ right: 10, bottom: 20 }}
+                customClass="tooltip-filldanger"
+                style={registerToolTipStyles}
                 direction="right"
-                tooltipText={errors.name}
-              >
-                <MisuseOutline32 />
-              </TooltipIcon>
+                tooltipText={<BiError />}
+                title={errors.name}
+              />
             )}
           </div>
           <div className="position-relative" style={{ height: 80 }}>
@@ -118,52 +111,39 @@ export default function Register() {
             />
             {touched.email && errors.email && (
               <TooltipIcon
-                className="position-absolute fill-danger"
-                style={{ right: 10, bottom: 20 }}
+                customClass="tooltip-filldanger"
+                style={registerToolTipStyles}
                 direction="right"
-                tooltipText={errors.email}
-              >
-                <MisuseOutline32 />
-              </TooltipIcon>
+                tooltipText={<BiError />}
+                title={errors.email}
+              />
             )}
           </div>
           <div className="position-relative" style={{ height: 80 }}>
             <label>DAY OF BIRTH</label>
             <DatePicker
-              className="bx--date-picker__input"
-              datePickerType="single"
-              dateFormat="d/m/Y"
-              onChange={(_, dob) => setFieldValue("dob", dob)}
-              ref={ref}
-            >
-              <DatePickerInput
-                autoComplete="off"
-                placeholder="mm/dd/yyyy"
-                labelText=""
-                id="register-date-picker"
-                name="dob"
-                onChange={handleChange}
-                onBlur={(e) => {
-                  if (
-                    e.relatedTarget?.classList.value !==
-                    "flatpickr-day bx--date-picker__day"
-                  ) {
-                    handleBlur(e);
-                  }
-                }}
-              />
-            </DatePicker>
+              autoComplete="off"
+              className="form-control"
+              name="dob"
+              onBlur={handleBlur}
+              onChange={(e) => {
+                setFieldTouched("dob", true);
+                setFieldValue("dob", e);
+              }}
+              placeholderText="dd/mm/yyyy"
+              selected={values.dob}
+            />
             {touched.dob && errors.dob && (
               <TooltipIcon
-                className="position-absolute fill-danger"
-                style={{ right: 38, bottom: 19 }}
+                customClass="tooltip-filldanger"
+                style={registerToolTipStyles}
                 direction="right"
-                tooltipText={errors.dob}
-              >
-                <MisuseOutline32 />
-              </TooltipIcon>
+                tooltipText={<BiError />}
+                title={errors.dob}
+              />
             )}
           </div>
+
           <div className="position-relative" style={{ height: 80 }}>
             <label>USERNAME</label>
             <input
@@ -177,13 +157,12 @@ export default function Register() {
             />
             {touched.username && errors.username && (
               <TooltipIcon
-                className="position-absolute fill-danger"
-                style={{ right: 10, bottom: 20 }}
+                customClass="tooltip-filldanger"
+                style={registerToolTipStyles}
                 direction="right"
-                tooltipText={errors.username}
-              >
-                <MisuseOutline32 />
-              </TooltipIcon>
+                tooltipText={<BiError />}
+                title={errors.username}
+              />
             )}
           </div>
           <div className="position-relative" style={{ height: 80 }}>
@@ -199,16 +178,15 @@ export default function Register() {
             />
             {touched.password && errors.password && (
               <TooltipIcon
-                className="position-absolute fill-danger"
-                style={{ right: 10, bottom: 20 }}
+                customClass="tooltip-filldanger"
+                style={registerToolTipStyles}
                 direction="right"
-                tooltipText={errors.password}
-              >
-                <MisuseOutline32 />
-              </TooltipIcon>
+                tooltipText={<BiError />}
+                title={errors.password}
+              />
             )}
           </div>
-          <button type="submit" className="btn s text-success mt-3">
+          <button type="submit" className="btn s s-lg text-success mt-3">
             Register
           </button>
         </form>

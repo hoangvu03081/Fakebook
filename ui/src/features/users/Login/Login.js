@@ -1,13 +1,11 @@
 import { useFormik } from "formik";
 import * as yup from "yup";
-import axios from "axios";
 import React from "react";
-import { TooltipIcon } from "carbon-components-react";
-import { MisuseOutline32 } from "@carbon/icons-react";
-import { domain } from "../../configs/constants";
-import { history } from "../..";
 import { useDispatch } from "react-redux";
-import { login } from "../userSlice/userSlice";
+import { login } from "../userSlice";
+import { TooltipIcon } from "../../../components/Tooltip/Tooltip";
+import { BiError } from "react-icons/bi";
+import { registerToolTipStyles } from "../Register/Register";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -66,13 +64,12 @@ export default function Login() {
             />
             {touched.username && errors.username && (
               <TooltipIcon
-                className="position-absolute fill-danger"
-                style={{ right: 10, bottom: 20 }}
+                customClass="tooltip-filldanger"
+                style={registerToolTipStyles}
                 direction="right"
-                tooltipText={errors.username}
-              >
-                <MisuseOutline32 />
-              </TooltipIcon>
+                tooltipText={<BiError />}
+                title={errors.username}
+              />
             )}
           </div>
           <div className="position-relative" style={{ height: 80 }}>
@@ -88,18 +85,23 @@ export default function Login() {
             />
             {touched.password && errors.password && (
               <TooltipIcon
-                className="position-absolute fill-danger"
-                style={{ right: 10, bottom: 20 }}
+                customClass="tooltip-filldanger"
+                style={registerToolTipStyles}
                 direction="right"
-                tooltipText={errors.password}
-              >
-                <MisuseOutline32 />
-              </TooltipIcon>
+                tooltipText={<BiError />}
+                title={errors.password}
+              />
             )}
           </div>
-          <button type="submit" className="btn s text-success">
-            Login
-          </button>
+          <div className="d-flex justify-content-between align-items-center pe-4">
+            <button type="submit" className="btn s text-success">
+              Login
+            </button>
+            <span>or</span>
+            <button type="submit" className="btn text-secondary">
+              Register
+            </button>
+          </div>
         </form>
       </div>
     </div>

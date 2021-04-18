@@ -6,18 +6,47 @@ body {
   background-color: $primary !important;
 }
 
-%btn {
-  @include boxShadowMedium;
-  border-radius: $wideRadius;
-  &:focus {
-    @include boxShadowMedium;
+
+
+.tooltip-filldanger {
+  color: $danger;
+
+  &.bs-tooltip-start {
+    .tooltip-arrow {
+      &::before {
+        border-left-color: $danger !important;
+      }
+    }
+  }
+  &.bs-tooltip-end {
+    .tooltip-arrow {
+      &::before {
+        border-right-color: $danger !important;
+      }
+    }
+  }
+  &.bs-tooltip-top {
+    .tooltip-arrow {
+      &::before {
+        border-top-color: $danger !important;
+      }
+    }
+  }
+  &.bs-tooltip-bottom {
+    .tooltip-arrow {
+      &::before {
+        border-bottom-color: $danger !important;
+      }
+    }
+  }
+
+  .tooltip-inner {
+    background: $danger;
   }
 }
-
-.btn.s {
-  min-width: $btnWidth;
-  @extend %btn;
-  &:active {
-    box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+.react-datepicker-wrapper {
+  display: block;
+  .react-datepicker__input-container {
+    display: block;
   }
 }
