@@ -35,4 +35,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship,Long> {
             "     WHERE u1.id = :id\n" +
             "     AND ((f1.requester_id IS NULL AND f1.receiver_id) IS NULL AND (f2.requester_id IS NULL AND f2.receiver_id IS NULL)) LIMIT 10",nativeQuery = true)
     List<Long> findNotFriendsId(@Param("id") long id);
+
+    @Query("SELECT e FROM Friendship e WHERE (e.friendshipId.receiverId=:id) AND e.status=0")
+    List<Friendship> getAllFriendshipRequest(@Param("id") long id);
 }
