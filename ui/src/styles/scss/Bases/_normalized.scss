@@ -1,0 +1,28 @@
+body {
+  background-color: $primary !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.posts {
+  .card {
+    .card-img-top {
+      min-height: 300px;
+    }
+  }
+}
+
+.user-icon {
+  border-radius: 50%;
+  padding: 4px;
+  width: 40px;
+  height: 40px;
+
+  &-lg {
+    width: 50px;
+    height: 50px;
+    margin: 0 4px 0 0;
+  }
+}

@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "watchSass": "sass --watch src/scss/style.scss:src/css/style.css",
+    "watchSass": "sass --watch src/styles/scss/style.scss:src/styles/css/style.css",
     "dev": "concurrently \"npm start\" \"npm run watchSass\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
