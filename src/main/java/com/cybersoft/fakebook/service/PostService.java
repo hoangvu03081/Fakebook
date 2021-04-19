@@ -8,4 +8,5 @@ import java.util.List;
 public interface PostService {
     long uploadPost(PostDto postDto);
     List<PostDto> getPost(LocalDateTime time);
+    List<PostDto> getProfilePost(long id);
 }

@@ -26,4 +26,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
             ")\n" +
             "ORDER BY upload_time desc;",nativeQuery = true)
     List<Post> getPost(@Param("id") long id, @Param("uploadTime") LocalDateTime uploadTime);
+
+    @Query("SELECT p FROM Post p WHERE p.userId=:id ORDER BY p.uploadTime DESC ")
+    List<Post> getProfilePost(@Param("id") long id);
 }

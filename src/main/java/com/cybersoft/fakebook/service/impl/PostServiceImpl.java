@@ -47,4 +47,14 @@ public class PostServiceImpl implements PostService {
             result.add(new PostDto(x));
         return result;
     }
+
+    @Override
+    public List<PostDto> getProfilePost(long id) {
+        List<Post> postList = postRepository.getProfilePost(id);
+        List<PostDto> result = new ArrayList<PostDto>();
+        for(Post x : postList)
+            result.add(new PostDto(x));
+        return result;
+
+    }
 }
