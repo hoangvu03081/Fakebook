@@ -50,4 +50,14 @@ public class PostController {
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("{id}")
+    public Object getProfilePost(@PathVariable String id){
+        try{
+            return new ResponseEntity<Object>(postService.getProfilePost(Long.parseLong(id)),HttpStatus.OK);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }
