@@ -6,8 +6,11 @@ import axios from "axios";
 import React, { useRef } from "react";
 import { TooltipIcon } from "../../../components/Tooltip/Tooltip";
 import { BiError } from "react-icons/bi";
-import { register } from "../userSlice";
 import { useDispatch } from "react-redux";
+import { apiDomain } from "../../../configs/constants";
+import { MySwal } from "../../../components/Swal/Swal";
+import { history } from "../../..";
+import { register } from "../userSlice";
 
 export const registerToolTipStyles = {
   position: "absolute",
@@ -40,20 +43,22 @@ export default function Register() {
       username: yup.string().required("Username is required"),
       // .min(5)
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const y = values.dob.getFullYear();
       let m = values.dob.getMonth();
       m = m < 10 ? "0" + m : m;
       let d = values.dob.getDate();
       d = d < 10 ? "0" + d : d;
       const dob = `${y}-${m}-${d}`;
-      
-      dispatch(
-        register({
-          ...values,
-          dob,
-        })
-      );
+
+      const userDto = {
+        ...values,
+        dob,
+        id: 0,
+        avatar: "",
+      };
+
+      await register(userDto);
     },
   });
 

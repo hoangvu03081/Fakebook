@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("api/image")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ImageController {
 
     private ImageService imageService;
