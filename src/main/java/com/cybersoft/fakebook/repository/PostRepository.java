@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
             "    SELECT *\n" +
             "    FROM\n" +
             "        post p\n" +
-            "    WHERE p.user_id=:id\n" +
+            "    WHERE p.user_id=:id AND upload_time<=:uploadTime\n" +
             ")\n" +
             "ORDER BY upload_time desc;",nativeQuery = true)
     List<Post> getPost(@Param("id") long id, @Param("uploadTime") LocalDateTime uploadTime);

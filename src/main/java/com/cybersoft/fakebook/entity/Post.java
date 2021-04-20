@@ -37,6 +37,9 @@ public class Post {
     @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
     private List<PostImage> postImage;
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<Comment> comment;
+
     public Post(PostDto postDto){
         this.id=postDto.getId();
         this.content=postDto.getContent();
