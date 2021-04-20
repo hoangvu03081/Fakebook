@@ -613,17 +613,17 @@ progress {
 }
 @media (min-width: 992px) {
   .container-lg, .container-md, .container-sm, .container {
-    max-width: 960px;
+    max-width: 900px;
   }
 }
 @media (min-width: 1200px) {
   .container-xl, .container-lg, .container-md, .container-sm, .container {
-    max-width: 1140px;
+    max-width: 948px;
   }
 }
 @media (min-width: 1400px) {
   .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
-    max-width: 1320px;
+    max-width: 967px;
   }
 }
 .row {
@@ -10728,13 +10728,78 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
-img {
-  min-height: 100%;
-  object-fit: cover;
+@font-face {
+  font-family: "cursive";
+  src: url("../../assets/fonts/BadScript-Regular.ttf") format("truetype");
 }
-
 body {
   background-color: #e8e8e8 !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.posts .card .card-img-top {
+  min-height: 300px;
+}
+
+.user-icon {
+  border-radius: 50%;
+  padding: 4px;
+  width: 40px;
+  height: 40px;
+}
+.user-icon-lg {
+  width: 50px;
+  height: 50px;
+  margin: 0 4px 0 0;
+}
+
+.btn.s {
+  box-shadow: 1px 1px 5px 0 rgba(22, 22, 22, 0.09) inset, -5px -5px 5px 0 rgba(255, 255, 255, 0.2), -10px -10px 10px 0 rgba(255, 255, 255, 0.1), 2px 2px 4px 0 rgba(22, 22, 22, 0.1), 5px 5px 10px 0 rgba(22, 22, 22, 0.1), 10px 10px 20px 0 rgba(22, 22, 22, 0.075), 15px 15px 20px 0 rgba(22, 22, 22, 0.05);
+  border-radius: 50px;
+}
+.btn.s:focus {
+  box-shadow: 1px 1px 5px 0 rgba(22, 22, 22, 0.09) inset, -5px -5px 5px 0 rgba(255, 255, 255, 0.2), -10px -10px 10px 0 rgba(255, 255, 255, 0.1), 2px 2px 4px 0 rgba(22, 22, 22, 0.1), 5px 5px 10px 0 rgba(22, 22, 22, 0.1), 10px 10px 20px 0 rgba(22, 22, 22, 0.075), 15px 15px 20px 0 rgba(22, 22, 22, 0.05);
+}
+
+.btn.s {
+  min-width: 150px;
+}
+.btn.s:active {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.btn.s-lg {
+  min-width: 200px;
+}
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.65);
+}
+
+.main-navbar .navbar-brand {
+  font-family: "cursive";
+}
+.main-navbar #userConfig + .dropdown-menu {
+  left: auto;
+  right: -20px;
+}
+
+.card-header-info h5, .card-header-info .h5 {
+  margin: 0;
+  line-height: 18px;
+  font-size: 20px;
+}
+.card-header-info span {
+  line-height: 9px;
+}
+
+.react-datepicker-wrapper {
+  display: block;
+}
+.react-datepicker-wrapper .react-datepicker__input-container {
+  display: block;
 }
 
 .tooltip-filldanger {
@@ -10754,31 +10819,6 @@ body {
 }
 .tooltip-filldanger .tooltip-inner {
   background: #dc3545;
-}
-
-.react-datepicker-wrapper {
-  display: block;
-}
-.react-datepicker-wrapper .react-datepicker__input-container {
-  display: block;
-}
-
-.btn.s {
-  box-shadow: 1px 1px 5px 0 rgba(22, 22, 22, 0.09) inset, -5px -5px 5px 0 rgba(255, 255, 255, 0.2), -10px -10px 10px 0 rgba(255, 255, 255, 0.1), 2px 2px 4px 0 rgba(22, 22, 22, 0.1), 5px 5px 10px 0 rgba(22, 22, 22, 0.1), 10px 10px 20px 0 rgba(22, 22, 22, 0.075), 15px 15px 20px 0 rgba(22, 22, 22, 0.05);
-  border-radius: 50px;
-}
-.btn.s:focus {
-  box-shadow: 1px 1px 5px 0 rgba(22, 22, 22, 0.09) inset, -5px -5px 5px 0 rgba(255, 255, 255, 0.2), -10px -10px 10px 0 rgba(255, 255, 255, 0.1), 2px 2px 4px 0 rgba(22, 22, 22, 0.1), 5px 5px 10px 0 rgba(22, 22, 22, 0.1), 10px 10px 20px 0 rgba(22, 22, 22, 0.075), 15px 15px 20px 0 rgba(22, 22, 22, 0.05);
-}
-
-.btn.s {
-  min-width: 150px;
-}
-.btn.s:active {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-.btn.s-lg {
-  min-width: 200px;
 }
 
 .register-form {

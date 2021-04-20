@@ -1,6 +1,7 @@
-@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+@import "./Helpers/fonts";
 @import "./Helpers/variables";
 @import "./Helpers/mixins";
 @import "./Bases/normalized";
-@import "./Components/button";
+@import "./Components/";
 @import "./Pages/register-login-form";
