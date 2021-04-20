@@ -58,6 +58,9 @@ public class User {
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Post> post;
 
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private List<Comment> comment;
+
     public User(UserDto userDto){
         this.id=userDto.getId();
         this.username=userDto.getUsername();
