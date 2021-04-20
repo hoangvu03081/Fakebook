@@ -6,8 +6,10 @@ import Modal from "../Modal/Modal";
 import {
   fetchAvatar,
   isValidToken,
+  logout,
   uploadAvatar,
 } from "../../features/user/userSlice";
+import { history } from "../..";
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -55,10 +57,7 @@ export default function Header() {
               aria-expanded="false"
             >
               {userData.avatarSrc ? (
-                <img
-                  className="user-icon"
-                  src={userData.avatarSrc}
-                />
+                <img className="user-icon" src={userData.avatarSrc} />
               ) : (
                 <AiOutlineUser className="bg-dark text-white user-icon" />
               )}
@@ -76,6 +75,15 @@ export default function Header() {
                 <Link to="/" className="dropdown-item">
                   Your profile
                 </Link>
+                <span
+                  onClick={() => {
+                    dispatch(logout());
+                    history.go();
+                  }}
+                  className="dropdown-item cursor-pointer"
+                >
+                  Logout
+                </span>
               </li>
             </ul>
           </div>

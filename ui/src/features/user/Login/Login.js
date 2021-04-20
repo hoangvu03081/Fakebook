@@ -6,6 +6,7 @@ import { login } from "../userSlice";
 import { TooltipIcon } from "../../../components/Tooltip/Tooltip";
 import { BiError } from "react-icons/bi";
 import { registerToolTipStyles } from "../Register/Register";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -98,9 +99,9 @@ export default function Login() {
               Login
             </button>
             <span>or</span>
-            <button type="submit" className="btn text-secondary">
+            <Link to="/register" className="btn text-secondary">
               Register
-            </button>
+            </Link>
           </div>
         </form>
       </div>

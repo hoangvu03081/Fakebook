@@ -1,12 +1,19 @@
 import React from "react";
-import Friends from '../friends';
+import Friends from "../friends/Friends";
+import AddPost from "./AddPost";
 
 export default function Posts() {
   return (
     <div className="p-0 posts container-md my-md-4">
       <div className="row">
         <div className="col-8">
-          <div className="bg-light">
+          <section className="py-3">
+            <div className="card">
+              <AddPost />
+            </div>
+          </section>
+
+          <section className="py-3">
             <div className="card">
               <header className="p-2 d-flex align-items-center">
                 <img
@@ -31,14 +38,12 @@ export default function Posts() {
                 className="card-img-top"
                 alt="..."
               />
-              <div className="footer p-2">
-                😉💖🚀
-              </div>
+              <div className="footer p-2">😉💖🚀</div>
             </div>
-          </div>
+          </section>
         </div>
         <div className="col-4">
-          <div className="bg-light">
+          <div style={{ overflowY: "auto" }}>
             <Friends></Friends>
           </div>
         </div>
