@@ -64,6 +64,7 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -88,6 +89,22 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
+
+        <!-- Full-text Search using lucene-integrated Hibernate Search ORM -->
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-search-elasticsearch -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-elasticsearch</artifactId>
+            <version>5.11.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-search-orm</artifactId>
+            <version>5.11.8.Final</version>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>
