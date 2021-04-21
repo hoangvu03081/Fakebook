@@ -60,4 +60,27 @@ public class PostController {
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping("like/{postId}")
+    public Object likePost(@PathVariable String postId){
+        try{
+            postService.likePost(Long.parseLong(postId));
+            return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("unlike/{postId}")
+    public Object unlikePost(@PathVariable String postId){
+        try{
+            postService.unlikePost(Long.parseLong(postId));
+            return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

@@ -16,6 +16,7 @@ public class PostDto {
     private int likes;
     private long userId;
     private LocalDateTime uploadTime;
+    private boolean liked;
 
     public PostDto(Post post){
         this.id=post.getId();

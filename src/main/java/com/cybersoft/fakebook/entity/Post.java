@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 
 @Getter
@@ -39,6 +40,9 @@ public class Post {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Comment> comment;
+
+    @ManyToMany(mappedBy = "likedPosts")
+    Set<User> likedUsers;
 
     public Post(PostDto postDto){
         this.id=postDto.getId();

@@ -9,4 +9,7 @@ public interface PostService {
     long uploadPost(PostDto postDto);
     List<PostDto> getPost(LocalDateTime time);
     List<PostDto> getProfilePost(long id);
+    void likePost(long postId);
+    void unlikePost(long postId);
+    boolean likedPostStatus(long postId);
 }
