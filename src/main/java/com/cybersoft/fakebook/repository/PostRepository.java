@@ -2,6 +2,7 @@ package com.cybersoft.fakebook.repository;
 
 import com.cybersoft.fakebook.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -29,4 +30,12 @@ public interface PostRepository extends JpaRepository<Post,Long> {
 
     @Query("SELECT p FROM Post p WHERE p.userId=:id ORDER BY p.uploadTime DESC ")
     List<Post> getProfilePost(@Param("id") long id);
+
+    @Modifying
+    @Query("UPDATE Post p SET p.likes=p.likes+1 WHERE p.id=:postId")
+    void likePost(@Param("postId") long postId);
+
+    @Modifying
+    @Query("UPDATE Post p SET p.likes=p.likes-1 WHERE p.id=:postId")
+    void unlikePost(@Param("postId") long postId);
 }

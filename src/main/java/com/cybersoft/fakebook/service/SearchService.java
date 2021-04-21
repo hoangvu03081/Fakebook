@@ -1,20 +1,27 @@
 package com.cybersoft.fakebook.service;
 
+import com.cybersoft.fakebook.dto.UserDto;
 import com.cybersoft.fakebook.entity.User;
+import com.cybersoft.fakebook.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.Query;
 import org.hibernate.search.FullTextSession;
+import org.hibernate.search.elasticsearch.ElasticsearchQueries;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.hibernate.search.query.engine.spi.QueryDescriptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -113,30 +120,25 @@ public class SearchService {
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class SearchService {
 
-    private final EntityManager entityManager;
+    private UserRepository userRepository;
 
-    public List<User> getPostBasedOnWord(String word){
-        FullTextEntityManager fullTextEntityManager =
-                Search.getFullTextEntityManager(entityManager);
-
-        QueryBuilder qb = fullTextEntityManager
-                .getSearchFactory()
-                .buildQueryBuilder()
-                .forEntity(User.class)
-                .get();
-
-        Query foodQuery = qb.keyword()
-                .onFields("username","name")
-                .matching(word)
-                .createQuery();
-
-        FullTextQuery fullTextQuery = fullTextEntityManager
-                .createFullTextQuery(foodQuery, User.class);
-        return (List<User>) fullTextQuery.getResultList();
+    public List<UserDto> querySearch(String queryString) {
+        List<UserDto> result = new ArrayList<UserDto>();
+        List<User> userList = userRepository.search(queryString);
+        for(User x:userList){
+            UserDto userDto = new UserDto();
+            userDto.setId(x.getId());
+            userDto.setAvatar(x.getAvatar());
+            userDto.setName(x.getName());
+            userDto.setUsername(x.getUsername());
+            result.add(userDto);
+        }
+        if(result.isEmpty())
+            System.out.println("empty");
+        return result;
     }
-
 
 }

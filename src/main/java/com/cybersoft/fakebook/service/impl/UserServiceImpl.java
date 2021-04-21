@@ -81,5 +81,15 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public FriendshipDto getUserProfileById(long id) {
+        User user = userRepository.findById(id).get();
+        if(user!=null){
+            FriendshipDto result = new FriendshipDto(user.getId(),user.getUsername(),user.getName(),user.getAvatar());
+            return result;
+        }
+        return null;
+    }
+
 
 }

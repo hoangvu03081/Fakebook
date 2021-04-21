@@ -15,4 +15,5 @@ public interface UserService {
     boolean deleteUserById(long id);
     boolean updateUser(UserDto dto);
     FriendshipDto getUserProfile();
+    FriendshipDto getUserProfileById(long id);
 }

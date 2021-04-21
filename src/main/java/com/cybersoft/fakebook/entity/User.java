@@ -21,6 +21,7 @@ import org.hibernate.search.annotations.Parameter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -28,8 +29,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Indexed
-@AnalyzerDefs({
+/*@AnalyzerDefs({
         @AnalyzerDef(name = "autocompleteEdgeAnalyzer",
                 tokenizer = @TokenizerDef(factory = KeywordTokenizerFactory.class),
                 filters = {
@@ -69,24 +69,15 @@ import java.util.List;
                                 @Parameter(name = "replace", value = "all") })
                 })
 })
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","friends","friendOf","follows","followers","post","comment"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","friends","friendOf","follows","followers","post","comment"})*/
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Fields({
-            @Field(name = "username", index = Index.YES, store = Store.YES,
-                    analyze = Analyze.YES, analyzer = @Analyzer(definition = "standardAnalyzer")),
-            @Field(name = "edgeNGramUsername", index = Index.YES, store = Store.NO,
-                    analyze = Analyze.YES, analyzer = @Analyzer(definition = "autocompleteEdgeAnalyzer")),
-            @Field(name = "nGramUsername", index = Index.YES, store = Store.NO,
-                    analyze = Analyze.YES, analyzer = @Analyzer(definition = "autocompleteNGramAnalyzer"))
-    })
     private String username;
 
-    @Field(name = "name")
     private String name;
 
     private String email;
@@ -126,6 +117,13 @@ public class User {
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Comment> comment;
+
+    @ManyToMany
+    @JoinTable(
+            name = "post_like",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id"))
+    Set<Post> likedPosts;
 
     public User(UserDto userDto){
         this.id=userDto.getId();
