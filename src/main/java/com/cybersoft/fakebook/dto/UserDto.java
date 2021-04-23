@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
@@ -13,10 +15,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserDto {
     private long id;
+    @NotEmpty
     private String username;
+    @NotEmpty
     private String name;
+    @NotEmpty
     private String email;
     private String password;
     private LocalDate dob;
+    @NotEmpty
     private String avatar;
 }

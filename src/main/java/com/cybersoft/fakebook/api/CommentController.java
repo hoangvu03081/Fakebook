@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("api/comment")
 @CrossOrigin
@@ -28,7 +30,7 @@ public class CommentController {
     }
 
     @PostMapping()
-    public Object postComment(@RequestBody CommentDto commentDto){
+    public Object postComment(@Valid @RequestBody CommentDto commentDto){
         try{
             return new ResponseEntity<Object>(commentService.postComment(commentDto),HttpStatus.CREATED);
         } catch (Exception e){
@@ -38,7 +40,7 @@ public class CommentController {
     }
 
     @PutMapping()
-    public Object editComment(@RequestBody CommentDto commentDto){
+    public Object editComment(@Valid @RequestBody CommentDto commentDto){
         try{
             return new ResponseEntity<Object>(commentService.editComment(commentDto),HttpStatus.OK);
         } catch (Exception e){

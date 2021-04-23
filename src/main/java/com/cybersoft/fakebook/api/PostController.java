@@ -3,7 +3,9 @@ package com.cybersoft.fakebook.api;
 import com.cybersoft.fakebook.dto.PostDto;
 import com.cybersoft.fakebook.entity.Image;
 import com.cybersoft.fakebook.service.ImageService;
+import com.cybersoft.fakebook.service.PostImageService;
 import com.cybersoft.fakebook.service.PostService;
+import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,19 +14,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("api/post")
 public class PostController {
 
     private ImageService imageService;
     private PostService postService;
-
-    public PostController(ImageService imageService,PostService postService){
-        this.imageService=imageService;
-        this.postService=postService;
-    }
+    private PostImageService postImageService;
 
     @PostMapping(value="upload")
     public Object uploadPostImages(@RequestPart("postDto")  PostDto postDto,
@@ -43,8 +43,10 @@ public class PostController {
     @GetMapping()
     public Object getPost(@RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time){
         try{
-            System.out.println(time.toString());
-            return new ResponseEntity<Object>(postService.getPost(time),HttpStatus.OK);
+            List<PostDto> postDto = postService.getPost(time);
+            for(PostDto x : postDto)
+                x.setImageId(postImageService.getPostImageIdByPostId(x.getId()));
+            return new ResponseEntity<Object>(postDto,HttpStatus.OK);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
@@ -54,7 +56,10 @@ public class PostController {
     @GetMapping("{id}")
     public Object getProfilePost(@PathVariable String id){
         try{
-            return new ResponseEntity<Object>(postService.getProfilePost(Long.parseLong(id)),HttpStatus.OK);
+            List<PostDto> postDto = postService.getProfilePost(Long.parseLong(id));
+            for(PostDto x : postDto)
+                x.setImageId(postImageService.getPostImageIdByPostId(x.getId()));
+            return new ResponseEntity<Object>(postDto,HttpStatus.OK);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);

@@ -125,6 +125,14 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "post_id"))
     Set<Post> likedPosts;
 
+    @ManyToMany
+    @JoinTable(
+            name= "chat_participant",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "chatroom_id")
+    )
+    Set<Chatroom> chatroomSet;
+
     public User(UserDto userDto){
         this.id=userDto.getId();
         this.username=userDto.getUsername();
