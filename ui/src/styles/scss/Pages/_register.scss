@@ -130,8 +130,19 @@
   position: relative;
   // border-top-left-radius: $radius;
   // border-bottom-right-radius: $radius;
-  min-width: $min-width;
   width: $max-width;
+  @media (max-width: 480px) {
+    width: $min-width;
+    .d-flex {
+      display: block !important;
+      .btn.s-outline {
+        width: 100%;
+      }
+    }
+    .form-check p {
+      padding-left: map-get($map: $spacers, $key: 2);
+    }
+  }
   height: $height;
   padding: $spacing * 4;
   @include boxShadowLarge;
@@ -196,7 +207,7 @@
       color: $u-primary;
     }
     .form-check-input:checked {
-      &+.checkmark {
+      & + .checkmark {
         background-color: $u-primary;
         &::after {
           display: block;
@@ -205,7 +216,7 @@
     }
     .checkmark {
       background-color: $gray-400;
-      
+
       &::after {
         display: none;
         content: "";

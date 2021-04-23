@@ -33,7 +33,7 @@ export default function Register() {
       dob: yup.string().required("Date of birth is required"),
       email: yup.string().required("Email is required").email(),
       name: yup.string().required("Name is required").max(50),
-      password: yup.string().required("Password is required"),
+      password: yup.string().required("Password is required").min(6, "Password length must be between 6 and 128"),
       username: yup.string().required("Username is required"),
     }),
     onSubmit: async (values) => {
@@ -209,7 +209,7 @@ export default function Register() {
             <Label for="password">Password</Label>
             <InputGroup>
               <Input
-                type="text"
+                type="password"
                 className="form-control"
                 placeholder="Password"
                 id="password"
