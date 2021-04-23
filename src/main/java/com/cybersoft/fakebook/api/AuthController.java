@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public Object login(@RequestBody LoginDto loginDto) {
+    public Object login(@Valid @RequestBody LoginDto loginDto) {
         try {
             String token = authService.login(loginDto);
             return new ResponseEntity<Object>(token, HttpStatus.OK);

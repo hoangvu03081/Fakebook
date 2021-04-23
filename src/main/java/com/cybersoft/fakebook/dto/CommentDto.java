@@ -4,6 +4,7 @@ import com.cybersoft.fakebook.entity.Comment;
 import lombok.*;
 
 import javax.persistence.Column;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Getter
@@ -12,7 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class CommentDto {
+
     private long id;
+
+    @NotEmpty
     private String content;
     private LocalDateTime uploadTime;
     private long userId;
