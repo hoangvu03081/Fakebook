@@ -28,7 +28,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public long uploadPost(PostDto postDto) {
+    public long uploadPost(PostDto postDto) throws IllegalAccessException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails)
+            username = ((UserDetails)principal).getUsername();
+        else username = principal.toString();
+        long id = userRepository.findIdByUsername(username);
+        if(postDto.getUserId()!=id)
+            throw new IllegalAccessException("User Id posted does not match token id");
         postDto.setUploadTime(LocalDateTime.now());
         Post post = new Post(postDto);
         return postRepository.save(post).getId();

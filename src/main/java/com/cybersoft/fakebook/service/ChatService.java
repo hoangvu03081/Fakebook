@@ -6,6 +6,6 @@ import com.cybersoft.fakebook.entity.ChatMessage;
 import java.util.List;
 
 public interface ChatService {
-    List<ChatMessage> getChatMessageByRoomId(long roomId);
-    boolean chat(ChatMessageDto chatMessageDto);
+    List<ChatMessageDto> getChatMessageByRoomId(long roomId);
+    ChatMessage chat(ChatMessageDto chatMessageDto) throws IllegalAccessException;
 }

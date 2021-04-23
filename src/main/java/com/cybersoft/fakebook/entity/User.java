@@ -1,11 +1,11 @@
 package com.cybersoft.fakebook.entity;
 
 import com.cybersoft.fakebook.dto.UserDto;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.*;
 import org.apache.lucene.analysis.core.KeywordTokenizerFactory;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
@@ -27,8 +27,12 @@ import java.util.Set;
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @Getter
 @Setter
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 /*@AnalyzerDefs({
         @AnalyzerDef(name = "autocompleteEdgeAnalyzer",
                 tokenizer = @TokenizerDef(factory = KeywordTokenizerFactory.class),
@@ -70,7 +74,7 @@ import java.util.Set;
                 })
 })
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler","friends","friendOf","follows","followers","post","comment"})*/
-public class User {
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -131,6 +135,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "chatroom_id")
     )
+    @JsonManagedReference
     Set<Chatroom> chatroomSet;
 
     public User(UserDto userDto){

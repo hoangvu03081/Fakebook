@@ -38,4 +38,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship,Long> {
 
     @Query("SELECT e FROM Friendship e WHERE (e.friendshipId.receiverId=:id) AND e.status=0")
     List<Friendship> getAllFriendshipRequest(@Param("id") long id);
+
+    @Query("SELECT e FROM Friendship e WHERE (e.friendshipId.requesterId=:id) AND e.status=0")
+    List<Friendship> getAllFriendshipRequestSent(@Param("id") long id);
 }

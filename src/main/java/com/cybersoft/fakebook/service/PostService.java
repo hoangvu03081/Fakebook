@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostService {
-    long uploadPost(PostDto postDto);
+    long uploadPost(PostDto postDto) throws IllegalAccessException;
     List<PostDto> getPost(LocalDateTime time);
     List<PostDto> getProfilePost(long id);
     void likePost(long postId);
