@@ -11,7 +11,10 @@ public interface FriendshipService {
     List<FriendshipDto> getAllFriends();
     List<FriendshipDto> getSuggestFriends();
     List<FriendshipDto> getFriendshipRequest();
+    List<FriendshipDto> getFriendshipRequestSent();
     boolean deleteFriendship(long id);
     boolean requestFriendship(long id);
     boolean acceptFriendship(long id);
+
+
 }

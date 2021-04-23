@@ -1,6 +1,8 @@
 package com.cybersoft.fakebook.entity;
 
 import com.cybersoft.fakebook.dto.PostDto;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "post")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

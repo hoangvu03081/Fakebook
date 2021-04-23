@@ -7,11 +7,14 @@ import com.cybersoft.fakebook.repository.ChatroomRepository;
 import com.cybersoft.fakebook.repository.UserRepository;
 import com.cybersoft.fakebook.service.ChatService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,12 +25,18 @@ public class ChatServiceImpl implements ChatService {
     private ChatMessageRepository chatMessageRepository;
 
     @Override
-    public List<ChatMessage> getChatMessageByRoomId(long roomId) {
-        return chatMessageRepository.getAllByChatroomIdOrderByLocalDateTimeDesc(roomId);
+    public List<ChatMessageDto> getChatMessageByRoomId(long roomId) {
+        List<ChatMessage> chatMessages=chatMessageRepository.getAllByChatroomIdOrderByLocalDateTimeDesc(roomId);
+        List<ChatMessageDto> result = new ArrayList<>();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        for(ChatMessage x :chatMessages)
+            result.add(modelMapper.map(x,ChatMessageDto.class));
+        return result;
     }
 
     @Override
-    public boolean chat(ChatMessageDto chatMessageDto) {
+    public ChatMessage chat(ChatMessageDto chatMessageDto) throws IllegalAccessException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails)
@@ -35,10 +44,10 @@ public class ChatServiceImpl implements ChatService {
         else username = principal.toString();
         long id = userRepository.findIdByUsername(username);
         if(chatMessageDto.getSenderId()!=id)
-            return false;
+            throw new IllegalAccessException("User id does not match token id");
 
         ChatMessage chatMessage = new ChatMessage(chatMessageDto);
-        chatMessageRepository.save(chatMessage);
-        return true;
+        return chatMessageRepository.save(chatMessage);
+
     }
 }

@@ -1,5 +1,8 @@
 package com.cybersoft.fakebook.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +18,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "chatroom")
-public class Chatroom {
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
+public class Chatroom{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

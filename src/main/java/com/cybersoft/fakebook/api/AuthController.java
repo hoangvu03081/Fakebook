@@ -28,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("register")
-    public Object post(@RequestBody UserDto userDto) {
+    public Object post(@Valid @RequestBody UserDto userDto) {
         try {
             Map<String,String> errorList = new HashMap<String,String>();
             int checkExist = userService.checkExistingUser(userDto);
