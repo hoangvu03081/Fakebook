@@ -1,0 +1,17 @@
+.profile-jumbotron {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  .box {
+    border: 2px solid $u-primary-bold;
+    border-radius: 50%;
+    padding: $spacing * 2;
+    position: relative;
+    .icon {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      bottom: 5px;
+    }
+  }
+}
