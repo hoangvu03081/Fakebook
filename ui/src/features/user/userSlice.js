@@ -5,7 +5,25 @@ import { MySwal } from "../../components/Swal/Swal";
 import { domain, token } from "../../configs/constants";
 import avatarFetch from "../axiosActions/avatarAction";
 
-const initialState = { token: "", isValidToken: false, data: {} };
+const initialState = { token: "", isValidToken: false, data: {}, profile: {} };
+
+export const getProfile = createAsyncThunk(
+  "user/getProfile",
+  async (id, thunkAPI) => {
+    try {
+      const { user } = thunkAPI.getState();
+      if (id === user.data.id) return user.data;
+
+      const res = await axios.get(`${domain}/api/user/${id}`, {
+        headers: { Authorization: user.token },
+      });
+      return res.data;
+    } catch (err) {
+      console.log(err);
+      return {};
+    }
+  }
+);
 
 export const isValidToken = createAsyncThunk(
   "user/isValidToken",
@@ -158,6 +176,9 @@ const userSlice = createSlice({
     },
     [fetchAvatar.fulfilled]: (state, action) => {
       state.data.avatarSrc = action.payload;
+    },
+    [getProfile.fulfilled]: (state, action) => {
+      state.profile = action.payload;
     },
   },
 });

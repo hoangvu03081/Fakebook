@@ -57,6 +57,7 @@ export const getPost = createAsyncThunk(
       return res.data;
     } catch (err) {
       console.log(err);
+      return [];
     }
   }
 );
@@ -71,6 +72,7 @@ export const getProfilePost = createAsyncThunk(
       return res.data;
     } catch (err) {
       console.log(err);
+      return [];
     }
   }
 );
@@ -80,10 +82,10 @@ const postsSlice = createSlice({
   reducers: {},
   extraReducers: {
     [getPost.fulfilled]: (state, action) => {
-      if (action.payload) state.posts = action.payload;
+      state.posts = action.payload;
     },
     [getProfilePost.fulfilled]: (state, action) => {
-      if (action.payload) state.posts = action.payload;
+      state.posts = action.payload;
     },
   },
 });
