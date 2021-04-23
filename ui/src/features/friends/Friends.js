@@ -1,71 +1,48 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useEffect } from "react";
+import { AiOutlineUser } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import FriendItem from "./FriendItem";
-import {
-  getFriends,
-  getRequestList,
-  getSuggestedFriends,
-  makeAccept,
-  makeRequest,
-} from "./friendsSlice";
+import { fetchFriendAvatar, getFriendList } from "./friendsSlice";
+
+export const renderFriends = (friends) => {
+  return friends.map((friend) => (
+    <div
+      key={friend.id}
+      className="user d-flex align-items-center rounded cursor-pointer"
+    >
+      {friend.avatarSrc ? (
+        <img className="user-icon" src={friend.avatarSrc} alt="" />
+      ) : (
+        <AiOutlineUser className="user-icon" />
+      )}
+      <span className="username">{friend.name}</span>
+    </div>
+  ));
+};
 
 export default function Friends() {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.user.token);
-  const { request, accept, requests, suggestedFriends, friends } = useSelector(
-    (state) => state.friends
-  );
+  const friends = useSelector((state) => state.friends.friends);
 
-  useEffect(() => {
-    if (token) {
-      dispatch(getRequestList(token));
-      dispatch(getSuggestedFriends(token));
-      dispatch(getFriends(token));
+  useEffect(async () => {
+    dispatch(getFriendList());
+  }, []);
+
+  useEffect(async () => {
+    if (friends.length) {
+      friends.forEach((friend) => {
+        dispatch(fetchFriendAvatar({friendId: friend.id, avatarId: friend.avatar, type: "friends"}));
+      });
     }
-  }, [token]);
-  useEffect(() => {
-    if (token) dispatch(getSuggestedFriends(token));
-  }, [request]);
-  useEffect(() => {
-    if (token) {
-      dispatch(getRequestList(token));
-      dispatch(getFriends(token));
-    }
-  }, [accept]);
-  if (!(suggestedFriends.length || requests.length || friends.length))
-    return <div>You have no friends 😭</div>;
+  }, [friends.length]);
+
   return (
-    <React.Fragment>
-      {suggestedFriends.length ? (
-        <FriendItem
-          title="Suggested friends"
-          list={suggestedFriends.slice(0, 2)}
-          accept="Request"
-          deny="Delete"
-          onAccept={(id) => {
-            dispatch(makeRequest(id));
-          }}
-        />
-      ) : null}
-      {requests.length ? (
-        <FriendItem
-          title="Requests"
-          list={requests.slice(0, 5)}
-          accept="Accept"
-          deny="Deny"
-          onAccept={(id) => {
-            dispatch(makeAccept(id));
-          }}
-        />
-      ) : null}
-      {friends.length ? (
-        <FriendItem
-          title="Your friends"
-          list={friends.slice(0, 20)}
-          accept="Chat"
-          onAccept={(id) => {console.log("want to chat with", id)}}
-        />
-      ) : null}
-    </React.Fragment>
+    <section
+      className="contacts p-4 bg-light rounded w-100 mb-3"
+      style={{ left: 0, right: 0, top: 0 }}
+    >
+      <h4>Contacts</h4>
+      {renderFriends(friends)}
+    </section>
   );
 }

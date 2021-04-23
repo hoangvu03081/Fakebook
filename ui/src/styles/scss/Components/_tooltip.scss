@@ -1,0 +1,47 @@
+.input-group {
+  align-items: center;
+  .tooltip-input-error {
+    color: $danger;
+    position: absolute;
+    right: 0;
+    padding: 9px 16px;
+    font-size: 20px;
+    z-index: 10;
+  }
+}
+
+
+.tooltip.bs-tooltip-auto {
+  &[x-placement^="left"] {
+    .arrow {
+      &::before {
+        border-left-color: $danger !important;
+      }
+    }
+  }
+  &[x-placement^="right"] {
+    .arrow {
+      &::before {
+        border-right-color: $danger !important;
+      }
+    }
+  }
+  &[x-placement^="top"] {
+    .arrow {
+      &::before {
+        border-top-color: $danger !important;
+      }
+    }
+  }
+  &[x-placement^="bottom"] {
+    .arrow {
+      &::before {
+        border-bottom-color: $danger !important;
+      }
+    }
+  }
+
+  .tooltip-inner {
+    background: $danger;
+  }
+}

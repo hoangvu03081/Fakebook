@@ -1,0 +1,26 @@
+.user {
+  padding: map-get($spacers, 1);
+  &:hover {
+    background-color: darken($white, 10);
+  }
+}
+.user-icon {
+  border-radius: 50%;
+  padding: 4px;
+  width: 40px;
+  height: 40px;
+  &-lg {
+    width: 50px;
+    height: 50px;
+    margin: 0 4px 0 0;
+  }
+  &-xlg {
+    width: 60px;
+    height: 60px;
+    margin: 0 5px 0 0;
+  }
+}
+.username {
+  margin-bottom: 2px;
+  font-weight: 600;
+}

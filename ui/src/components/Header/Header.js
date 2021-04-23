@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import Modal from "../Modal/Modal";
 import {
   fetchAvatar,
   isValidToken,
@@ -10,20 +9,46 @@ import {
   uploadAvatar,
 } from "../../features/user/userSlice";
 import { history } from "../..";
+import {
+  Container,
+  Collapse,
+  Navbar,
+  NavbarBrand,
+  NavbarToggler,
+  Nav,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  Modal,
+  ModalHeader,
+  DropdownItem,
+  ModalBody,
+  FormGroup,
+  CustomInput,
+} from "reactstrap";
 
 export default function Header() {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.user.data);
-  const modalId = "modalMainNav";
 
+  const [isOpen, setIsOpen] = useState(false);
   const [file, setFile] = useState(null);
+  const [modal, setModal] = useState(false);
 
-  const onSave = async (e) => {
-    e.preventDefault();
+  const onSave = async () => {
+    // create form data to submit a file
     const formData = new FormData();
     formData.append("file", file);
+    // dispatch upload avatar action to send file to backend
     await dispatch(uploadAvatar(formData));
+    // fetch user data again to refresh image
     dispatch(isValidToken());
+    // close the modal
+    setModal(false);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
   };
 
   useEffect(() => {
@@ -31,74 +56,59 @@ export default function Header() {
   }, [userData.avatar]);
 
   return (
-    <nav className="main-navbar navbar navbar-expand-md navbar-light bg-light">
-      <div className="container-fluid px-4">
-        <a className="navbar-brand" href="#">
-          fakebook
-        </a>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#main-navbar"
-          aria-controls="main-navbar"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-        <div className="collapse navbar-collapse" id="main-navbar">
-          <ul className="me-auto"></ul>
-          <div className="dropdown">
-            <div
-              className="d-flex align-items-center cursor-pointer"
-              id="userConfig"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              {userData.avatarSrc ? (
-                <img className="user-icon" src={userData.avatarSrc} />
-              ) : (
-                <AiOutlineUser className="bg-dark text-white user-icon" />
-              )}
-              <span className="ms-2">{userData.name}</span>
-            </div>
-            <ul className="dropdown-menu" aria-labelledby="userConfig">
-              <li>
-                <span
-                  className="dropdown-item cursor-pointer"
-                  data-bs-toggle="modal"
-                  data-bs-target={`#${modalId}`}
-                >
-                  Set avatar
-                </span>
-                <Link to="/" className="dropdown-item">
-                  Your profile
-                </Link>
-                <span
-                  onClick={() => {
-                    dispatch(logout());
-                    history.go();
-                  }}
-                  className="dropdown-item cursor-pointer"
-                >
-                  Logout
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <Modal title="Upload your avatar here" id={modalId} onSave={onSave}>
-        <input
-          className="form-control"
-          type="file"
-          onChange={(e) => {
-            setFile(e.target.files[0]);
-          }}
-        />
-      </Modal>
-    </nav>
+    <Navbar color="light" light expand="md" className="main-navbar">
+      <Container fluid={true} className="px-4">
+        <NavbarBrand href="/">fakebook</NavbarBrand>
+        <NavbarToggler onClick={() => setIsOpen(!isOpen)} />
+        <Collapse isOpen={isOpen} navbar>
+          <Nav navbar className="ml-auto">
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav>
+                <div className="d-flex align-items-center justify-content-center">
+                  {userData.avatarSrc ? (
+                    <img className="user-icon" src={userData.avatarSrc} />
+                  ) : (
+                    <AiOutlineUser className="user-icon" />
+                  )}
+                  <span className="username">
+                    {userData.name}
+                  </span>
+                </div>
+              </DropdownToggle>
+              <DropdownMenu right style={{ top: 42 }}>
+                <DropdownItem onClick={(e) => setModal(!modal)}>
+                  Set your avatar
+                </DropdownItem>
+                {/* modal of the set your avatar */}
+                <Modal isOpen={modal} toggle={(e) => setModal(!modal)}>
+                  <ModalHeader toggle={(e) => setModal(!modal)}>
+                    Upload image
+                  </ModalHeader>
+                  <ModalBody>
+                    <FormGroup>
+                      <CustomInput
+                        id="file"
+                        type="file"
+                        label="Upload your avatar here!"
+                        onChange={(e) => {
+                          setFile(e.target.files[0]);
+                        }}
+                      />
+                    </FormGroup>
+                    <button
+                      className="btn s rounded d-block w-100 mt-4"
+                      onClick={onSave}
+                    >
+                      Submit
+                    </button>
+                  </ModalBody>
+                </Modal>
+                <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+          </Nav>
+        </Collapse>
+      </Container>
+    </Navbar>
   );
 }
