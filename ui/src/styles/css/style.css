@@ -9963,6 +9963,11 @@ input[type=checkbox] {
   opacity: 0;
 }
 
+a {
+  text-decoration: none;
+  color: #000;
+}
+
 .checkmark {
   position: absolute;
   top: 4px;
@@ -10024,6 +10029,10 @@ input[type=checkbox] {
   left: auto;
   right: -20px;
 }
+.main-navbar a:hover {
+  text-decoration: none;
+  color: #000;
+}
 
 .card {
   background-color: #fcfdfd;
@@ -10083,7 +10092,6 @@ input[type=checkbox] {
 
 .register-form {
   position: relative;
-  min-width: 318px;
   width: 460px;
   height: auto;
   padding: 40px;
@@ -10091,6 +10099,20 @@ input[type=checkbox] {
   background-color: #f8f9fa;
   display: flex;
   flex-direction: column;
+}
+@media (max-width: 480px) {
+  .register-form {
+    width: 318px;
+  }
+  .register-form .d-flex {
+    display: block !important;
+  }
+  .register-form .d-flex .btn.s-outline {
+    width: 100%;
+  }
+  .register-form .form-check p {
+    padding-left: 0.5rem;
+  }
 }
 .register-form .heading {
   display: flex;
@@ -10245,10 +10267,13 @@ input[type=checkbox] {
   font-weight: 600;
 }
 
-.profile-jumbotron {
-  display: flex;
+.profile-jumbotron .jumbo-box {
   align-items: center;
   flex-direction: column;
+  display: flex;
+  min-width: 320px;
+  max-width: 992px;
+  margin: auto;
 }
 .profile-jumbotron .box {
   border: 2px solid #061f61;

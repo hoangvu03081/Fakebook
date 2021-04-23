@@ -2,13 +2,15 @@ import React from "react";
 import { useEffect } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { fetchFriendAvatar, getFriendList } from "./friendsSlice";
 
 export const renderFriends = (friends) => {
   return friends.map((friend) => (
-    <div
+    <Link
       key={friend.id}
       className="user d-flex align-items-center rounded cursor-pointer"
+      to={`/profile/${friend.id}`}
     >
       {friend.avatarSrc ? (
         <img className="user-icon" src={friend.avatarSrc} alt="" />
@@ -16,7 +18,7 @@ export const renderFriends = (friends) => {
         <AiOutlineUser className="user-icon" />
       )}
       <span className="username">{friend.name}</span>
-    </div>
+    </Link>
   ));
 };
 

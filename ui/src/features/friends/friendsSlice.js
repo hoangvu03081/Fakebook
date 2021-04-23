@@ -11,7 +11,11 @@ const name = "friends";
 export const fetchFriendAvatar = createAsyncThunk(
   `${name}/getFriendAvatar`,
   async ({ friendId, avatarId, type }, thunkAPI) => {
-    return { friendId, avatarSrc: await avatarFetch(avatarId, thunkAPI), type };
+    if (avatarId) {
+      const avatarSrc = await avatarFetch(avatarId, thunkAPI);
+      return { friendId, avatarSrc, type };
+    }
+    return "";
   }
 );
 
