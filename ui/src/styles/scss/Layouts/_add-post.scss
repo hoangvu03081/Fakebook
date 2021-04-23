@@ -1,0 +1,28 @@
+.add-post {
+  .post-input-content {
+    border: none;
+    resize: none;
+    font-size: $font-size-2;
+    &:focus {
+      box-shadow: none;
+    }
+  }
+  .custom-file {
+    $height: 50px;
+    height: $height;
+    .custom-file-label {
+      height: $height;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      &::after {
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+    }
+    .custom-file-input {
+      height: $height;
+    }
+  }
+}
