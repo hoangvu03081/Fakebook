@@ -52,13 +52,16 @@ export default function Header() {
   };
 
   useEffect(() => {
-    dispatch(fetchAvatar(userData.avatar));
+    if (userData.avatar)
+      dispatch(fetchAvatar({ type: "user", avatarId: userData.avatar }));
   }, [userData.avatar]);
 
   return (
     <Navbar color="light" light expand="md" className="main-navbar">
       <Container fluid={true} className="px-4">
-        <NavbarBrand href="/">fakebook</NavbarBrand>
+        <NavbarBrand tag="div">
+          <Link to="/">fakebook</Link>
+        </NavbarBrand>
         <NavbarToggler onClick={() => setIsOpen(!isOpen)} />
         <Collapse isOpen={isOpen} navbar>
           <Nav navbar className="ml-auto">
@@ -70,9 +73,7 @@ export default function Header() {
                   ) : (
                     <AiOutlineUser className="user-icon" />
                   )}
-                  <span className="username">
-                    {userData.name}
-                  </span>
+                  <span className="username">{userData.name}</span>
                 </div>
               </DropdownToggle>
               <DropdownMenu right style={{ top: 42 }}>
@@ -103,6 +104,10 @@ export default function Header() {
                     </button>
                   </ModalBody>
                 </Modal>
+                {/* end modal */}
+                <DropdownItem>
+                  <Link to={`/profile/${userData.id}`}>Your profile</Link>
+                </DropdownItem>
                 <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>

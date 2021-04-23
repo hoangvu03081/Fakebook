@@ -99,8 +99,10 @@ export const uploadAvatar = createAsyncThunk(
 
 export const fetchAvatar = createAsyncThunk(
   "user/avatar",
-  async (avatarId, thunkAPI) => {
-    return await avatarFetch(avatarId, thunkAPI);
+  async ({ type, avatarId }, thunkAPI) => {
+    const avatarSrc = await avatarFetch(avatarId, thunkAPI);
+    if (avatarId) return { type, avatarSrc };
+    return { type, avatarSrc: "" };
   }
 );
 
@@ -175,7 +177,15 @@ const userSlice = createSlice({
       state.data.avatar = action.payload;
     },
     [fetchAvatar.fulfilled]: (state, action) => {
-      state.data.avatarSrc = action.payload;
+      const { type, avatarSrc } = action.payload;
+      switch (type) {
+        case "user":
+          state.data.avatarSrc = avatarSrc;
+          break;
+        case "profile":
+          state.profile.avatarSrc = avatarSrc;
+          break;
+      }
     },
     [getProfile.fulfilled]: (state, action) => {
       state.profile = action.payload;

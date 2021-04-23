@@ -1,7 +1,12 @@
 .profile-jumbotron {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+  .jumbo-box {
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    min-width: 320px;
+    max-width: map-get($map: $grid-breakpoints, $key: lg);
+    margin: auto;
+  }
   .box {
     border: 2px solid $u-primary-bold;
     border-radius: 50%;

@@ -35,7 +35,7 @@ export default function Login() {
       password: "",
     },
     validationSchema: yup.object({
-      password: yup.string().required("Password is required"),
+      password: yup.string().required("Password is required").min(6, "Password length must be between 6 and 128"),
       username: yup.string().required("Username is required"),
     }),
     onSubmit: (values) => {
@@ -153,7 +153,7 @@ export default function Login() {
             <Input type="checkbox" /> Remember Me
             <div className="checkmark"></div>
           </Label>
-          <span className="text-secondary cursor-pointer">Forgot Password</span>
+          <p className="text-secondary cursor-pointer">Forgot Password</p>
         </FormGroup>
 
         <p className="d-flex align-items-center mt-3 justify-content-between">
