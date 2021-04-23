@@ -1,37 +1,30 @@
 body {
-  background-color: $primary !important;
+  background-color: $gray-400;
+  min-height: 100vh;
+  color: lighten($black, 10);
 }
 
 .cursor-pointer {
   cursor: pointer;
 }
 
-.fw-semi-bold {
-  font-weight: 600;
-}
-
 .posts {
   .card {
     .card-img-top {
       min-height: 300px;
+      max-height: 600px;
     }
   }
 }
 
-.user-icon {
-  border-radius: 50%;
-  padding: 4px;
-  width: 40px;
-  height: 40px;
+input[type="checkbox"] {
+  opacity: 0;
+}
 
-  &-lg {
-    width: 50px;
-    height: 50px;
-    margin: 0 4px 0 0;
-  }
-  &-xlg {
-    width: 60px;
-    height: 60px;
-    margin: 0 5px 0 0;
-  }
+.checkmark {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 20px;
+  height: 20px;
 }

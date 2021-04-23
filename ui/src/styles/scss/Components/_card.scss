@@ -1,10 +1,13 @@
-.card-header-info {
-  h5 {
-    margin: 0;
-    line-height: 18px;
-    font-size: $sizeMd;
-  }
-  span {
-    line-height: 9px;
+.card {
+  background-color: lighten($gray-100, 1.5);
+  .card-header-info {
+    h5 {
+      margin: 0;
+      line-height: 18px;
+      font-size: $font-size-2;
+    }
+    span {
+      line-height: 9px;
+    }
   }
 }
