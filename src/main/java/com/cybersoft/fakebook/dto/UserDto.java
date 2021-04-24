@@ -23,8 +23,8 @@ public class UserDto {
     private String name;
     @NotEmpty
     private String email;
+    @Length(min=6,max = 128)
     private String password;
     private LocalDate dob;
-    @NotEmpty
     private String avatar;
 }
