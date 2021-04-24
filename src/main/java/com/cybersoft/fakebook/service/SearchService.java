@@ -4,22 +4,14 @@ import com.cybersoft.fakebook.dto.UserDto;
 import com.cybersoft.fakebook.entity.User;
 import com.cybersoft.fakebook.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.lucene.search.Query;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.elasticsearch.ElasticsearchQueries;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
-import org.hibernate.search.query.engine.spi.QueryDescriptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.search.engine.search.query.SearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,10 +117,48 @@ public class SearchService {
 
     private UserRepository userRepository;
 
+    private EntityManager entityManager;
+    @Transactional
+    public void initIndex() {
+
+        try {
+            SearchSession searchSession = Search.session( entityManager );
+
+            MassIndexer indexer = searchSession.massIndexer( User.class )
+                    .threadsToLoadObjects( 7 );
+            indexer.startAndWait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<UserDto> querySearch(String queryString) {
         List<UserDto> result = new ArrayList<UserDto>();
         List<User> userList = userRepository.search(queryString);
         for(User x:userList){
+            UserDto userDto = new UserDto();
+            userDto.setId(x.getId());
+            userDto.setAvatar(x.getAvatar());
+            userDto.setName(x.getName());
+            userDto.setUsername(x.getUsername());
+            result.add(userDto);
+        }
+        if(result.isEmpty())
+            System.out.println("empty");
+        return result;
+    }
+
+    public List<UserDto> search(String queryString) {
+        SearchSession searchSession = Search.session( entityManager );
+        SearchResult<User> searchResult = searchSession.search( User.class )
+                .where( f -> f.match()
+                        .fields( "name","username")
+                        .matching( queryString ) )
+                .fetch( 20 );
+        List<User> hits = searchResult.hits();
+
+        List<UserDto> result = new ArrayList<UserDto>();
+        for(User x:hits){
             UserDto userDto = new UserDto();
             userDto.setId(x.getId());
             userDto.setAvatar(x.getAvatar());

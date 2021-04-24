@@ -76,6 +76,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostDto> getProfilePostByTime(long id, LocalDateTime time) {
+        List<Post> postList = postRepository.getProfilePostFromTime(id,time);
+        List<PostDto> result = new ArrayList<PostDto>();
+        for(Post x : postList)
+        {
+            PostDto postDto = new PostDto(x);
+            postDto.setLiked(likedPostStatus(postDto.getId()));
+            result.add(postDto);
+        }
+        return result;
+    }
+
+    @Override
     public void likePost(long postId) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
