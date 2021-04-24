@@ -9,6 +9,7 @@ public interface PostService {
     long uploadPost(PostDto postDto) throws IllegalAccessException;
     List<PostDto> getPost(LocalDateTime time);
     List<PostDto> getProfilePost(long id);
+    List<PostDto> getProfilePostByTime(long id,LocalDateTime time);
     void likePost(long postId);
     void unlikePost(long postId);
     boolean likedPostStatus(long postId);

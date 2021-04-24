@@ -66,6 +66,20 @@ public class PostController {
         }
     }
 
+    @GetMapping("profile/{id}")
+    public Object getProfilePostByTime(@PathVariable String id, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime time){
+        try{
+            List<PostDto> postDto = postService.getProfilePostByTime(Long.parseLong(id),time);
+            for(PostDto x : postDto)
+                x.setImageId(postImageService.getPostImageIdByPostId(x.getId()));
+            return new ResponseEntity<Object>(postDto,HttpStatus.OK);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("like/{postId}")
     public Object likePost(@PathVariable String postId){
         try{

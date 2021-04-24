@@ -31,6 +31,9 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query("SELECT p FROM Post p WHERE p.userId=:id ORDER BY p.uploadTime DESC ")
     List<Post> getProfilePost(@Param("id") long id);
 
+    @Query("SELECT p FROM Post p WHERE p.userId=:id AND p.uploadTime<=:uploadTime ORDER BY p.uploadTime DESC ")
+    List<Post> getProfilePostFromTime(@Param("id") long id, @Param("uploadTime") LocalDateTime uploadTime);
+
     @Modifying
     @Query("UPDATE Post p SET p.likes=p.likes+1 WHERE p.id=:postId")
     void likePost(@Param("postId") long postId);

@@ -1,13 +1,16 @@
 package com.cybersoft.fakebook;
 
+import com.cybersoft.fakebook.service.SearchService;
 import org.atmosphere.cpr.AtmosphereServlet;
 import org.atmosphere.cpr.ContainerInitializer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -19,7 +22,7 @@ import javax.servlet.ServletException;
 import java.util.Collections;
 
 @SpringBootApplication(exclude = {
-        org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class}
+        org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class, ElasticsearchDataAutoConfiguration.class}
 )
 public class FakebookApplication {
 
@@ -54,7 +57,8 @@ public class FakebookApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(FakebookApplication.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(FakebookApplication.class, args);
+        //context.getBean(SearchService.class).initIndex();
     }
 
     @Bean

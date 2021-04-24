@@ -18,7 +18,7 @@ public class SearchController {
     public Object search(@RequestParam("query") String string){
         try{
             System.out.println(string);
-            return new ResponseEntity<Object>(searchService.querySearch(string),HttpStatus.OK);
+            return new ResponseEntity<Object>(searchService.search(string),HttpStatus.OK);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
