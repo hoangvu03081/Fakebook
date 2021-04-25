@@ -9976,25 +9976,29 @@ a {
   height: 20px;
 }
 
-.btn.s {
+.btn.d, .btn.s {
   padding-left: 30px;
   padding-right: 30px;
-  background: linear-gradient(to right, #1bb0db, #061f61 80%);
-  background-size: 200% 100%;
-  background-position: 10% center;
   border: none;
   color: #fff;
   border-radius: 50px;
-  transition: background-position 0.5s;
   width: 100%;
 }
+
 .btn.s-outline {
   background: transparent;
-  border: 1px solid #1bb0db;
   border-radius: 50px;
-  color: #1bb0db;
   padding-left: 30px;
   padding-right: 30px;
+}
+
+.btn.s {
+  background: linear-gradient(to right, #1bb0db, #061f61 80%);
+  transition: all 0.25s;
+}
+.btn.s-outline {
+  border: 1px solid #1bb0db;
+  color: #1bb0db;
 }
 .btn.s-outline:hover {
   background: #1bb0db;
@@ -10009,7 +10013,7 @@ a {
   background-color: #061f61;
 }
 .btn.s:hover {
-  background-position: 80% center;
+  background: #092e91;
 }
 .btn.s:active {
   box-shadow: none;
@@ -10018,10 +10022,21 @@ a {
   box-shadow: none;
 }
 
+.btn.d {
+  background: linear-gradient(to right, #6c757d, #495057);
+  transition: all 0.25s;
+}
+.btn.d:hover {
+  background: #6c757d;
+}
+
 .modal {
   background-color: rgba(0, 0, 0, 0.65);
 }
 
+.main-navbar {
+  border-bottom: 1px solid #adb5bd;
+}
 .main-navbar .navbar-brand {
   font-family: "cursive";
 }
@@ -10239,6 +10254,7 @@ a {
 }
 
 .user {
+  height: 48px;
   padding: 0.25rem;
 }
 .user:hover {
@@ -10286,6 +10302,23 @@ a {
   width: 200px;
   height: 200px;
   bottom: 5px;
+}
+
+.wrapper {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.suggests {
+  background-color: #f8f9fa;
+  border-right: 1px solid #adb5bd;
+}
+
+.search .user {
+  justify-content: center;
+  padding-right: 40px;
+  width: 300px;
+  background-color: #f8f9fa;
 }
 
 /*# sourceMappingURL=style.css.map */

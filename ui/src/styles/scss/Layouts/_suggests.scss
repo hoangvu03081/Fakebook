@@ -1,0 +1,16 @@
+.wrapper {
+  height: 100vh;
+  overflow: hidden;
+}
+.suggests {
+  background-color: $gray-100;
+  border-right: 1px solid $gray-500;
+}
+.search {
+  .user {
+    justify-content: center;
+    padding-right: 40px;
+    width: 300px;
+    background-color: $gray-100;
+  }
+}

@@ -15,7 +15,7 @@ import {
 } from "reactstrap";
 import { useEffect } from "react";
 
-export default function AddPost() {
+const AddPost = React.memo(() => {
   const name = useSelector((state) => state.user.data.name);
 
   const dispatch = useDispatch();
@@ -29,7 +29,9 @@ export default function AddPost() {
     validationSchema: yup.object({
       content: yup.string().required("This field is required"),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values, formikBags) => {
+      formikBags.resetForm();
+      setFile(null);
       let sendValues = { ufile: file, content: values.content };
       dispatch(addPost(sendValues));
     },
@@ -82,4 +84,7 @@ export default function AddPost() {
       </Form>
     </Card>
   );
-}
+});
+
+AddPost.displayName = "AddPost";
+export default AddPost;

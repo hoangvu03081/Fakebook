@@ -58,7 +58,7 @@ public class FakebookApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(FakebookApplication.class, args);
-        //context.getBean(SearchService.class).initIndex();
+        context.getBean(SearchService.class).initIndex();
     }
 
     @Bean

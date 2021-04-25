@@ -3,15 +3,18 @@ import RegisterTemplate from "./templates/Register";
 import "./styles/css/style.css";
 import Login from "./features/user/Login";
 import { Switch } from "react-router";
-import Posts from "./features/posts/Posts";
+import MainFeed from "./features/posts/MainFeed";
 import HomeTemplate from "./templates/Home";
 import Profile from "./features/Profile";
+import ThreeSecs from "./templates/ThreeSecs";
+import SuggestedFriends from "./features/friends/SuggestedFriends";
 
 function App() {
   return (
     <>
       <Switch>
-        <HomeTemplate Component={Posts} exact path="/" />
+        <HomeTemplate Component={MainFeed} exact path="/" />
+        <ThreeSecs Component={SuggestedFriends} path="/requests" />
         <HomeTemplate Component={Profile} path="/profile/:id" />
         <RegisterTemplate Component={Register} path="/register"/>
         <RegisterTemplate Component={Login} path="/login"/>

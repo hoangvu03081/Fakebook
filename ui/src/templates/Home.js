@@ -7,7 +7,7 @@ import { isValidToken } from "../features/user/userSlice";
 
 export default function Home({ Component, ...props }) {
   const dispatch = useDispatch();
-  const isValid = useSelector(state => state.user.isValidToken);
+  const isValid = useSelector((state) => state.user.isValidToken);
 
   // check for first time users go to page or check for valid token login
   // if don't valid then dispatch a function to check for valid again
