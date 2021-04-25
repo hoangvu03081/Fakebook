@@ -158,6 +158,7 @@ export const getSentRequests = createAsyncThunk(
   }
 );
 
+
 export const friendsSlice = createSlice({
   name,
   initialState,
@@ -230,5 +231,6 @@ export const friendsSlice = createSlice({
     },
   },
 });
+export const {logout} = friendsSlice.actions;
 
 export default friendsSlice.reducer;

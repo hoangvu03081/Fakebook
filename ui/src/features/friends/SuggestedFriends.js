@@ -6,6 +6,7 @@ import {
   fetchFriendAvatar,
   getRequests,
   getSuggestedFriends,
+  logout,
 } from "./friendsSlice";
 
 export default function SuggestedFriends() {
@@ -13,25 +14,30 @@ export default function SuggestedFriends() {
   const suggests = useSelector((state) => state.friends.suggests);
   const requests = useSelector((state) => state.friends.requests);
   const token = useSelector((state) => state.user.token);
-  useEffect(async () => {
+  useEffect(() => {
     if (token) {
       dispatch(getSuggestedFriends());
       dispatch(getRequests());
     }
   }, [token]);
-  useEffect(async () => {
-    if (suggests.fetched) {
-      suggests.data.forEach((friend) => {
-        dispatch(
-          fetchFriendAvatar({
-            friendId: friend.id,
-            avatarId: friend.avatar,
-            type: "suggests",
-          })
-        );
-      });
-    }
-  }, [suggests.fetched]);
+
+  useEffect(() => {
+    suggests.data.forEach((friend) => {
+      dispatch(
+        fetchFriendAvatar({
+          friendId: friend.id,
+          avatarId: friend.avatar,
+          type: "suggests",
+        })
+      );
+    });
+  }, [suggests.data.length]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(logout());
+    };
+  }, []);
 
   const renderRequests = () => {
     if (requests.fetched && requests.data.length) {

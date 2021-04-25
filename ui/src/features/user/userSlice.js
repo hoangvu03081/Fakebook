@@ -187,6 +187,9 @@ const userSlice = createSlice({
     logout(state, action) {
       return initialState;
     },
+    clearProfile(state, action) {
+      state.profile = {};
+    },
   },
   extraReducers: {
     [login.fulfilled]: (state, action) => {
@@ -218,5 +221,7 @@ const userSlice = createSlice({
     },
   },
 });
+
+export const { clearProfile } = userSlice.actions;
 
 export default userSlice.reducer;

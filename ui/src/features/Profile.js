@@ -12,7 +12,7 @@ import {
   unfriend,
 } from "./friends/friendsSlice";
 import { getProfilePost } from "./posts/postsSlice";
-import { fetchAvatar, getProfile } from "./user/userSlice";
+import { clearProfile, fetchAvatar, getProfile } from "./user/userSlice";
 import Posts from "./posts/Posts";
 
 const Button = ({ type, content, id }) => {
@@ -67,10 +67,18 @@ const Profile = React.memo(function Profile(props) {
     }
   }, [token]);
   useEffect(() => {
+    console.log(123);
     if (profile.avatar) {
+      console.log(profile.avatar);
       dispatch(fetchAvatar({ type: "profile", avatarId: profile.avatar }));
     }
   }, [profile.avatar]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearProfile());
+    };
+  }, []);
 
   const renderedBtn = () => {
     if (friends.fetched && requests.fetched && sentRequests.fetched) {

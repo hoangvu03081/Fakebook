@@ -17,8 +17,13 @@ function Posts({ type, id }) {
     (state) => state.friends.friends.fetchedFriendAvatar
   );
   const fetchedAvatar = useSelector((state) => state.user.fetchedAvatar);
+  const friends = useSelector((state) => state.friends.friends.data);
   useEffect(() => {
-    if (token && fetchedFriendAvatar && fetchedAvatar) {
+    if (
+      token &&
+      (fetchedFriendAvatar || friends.length === 0) &&
+      fetchedAvatar
+    ) {
       const ISOString = getISOStringNow();
       switch (type) {
         case "post":
