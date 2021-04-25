@@ -4,7 +4,7 @@ import { domain } from "../../configs/constants";
 import avatarFetch from "../axiosActions/avatarAction";
 
 const initialState = {
-  friends: { data: [], fetched: false },
+  friends: { data: [], fetched: false, fetchedFriendAvatar: false },
   suggests: { data: [], fetched: false },
   sentRequests: { data: [], fetched: false },
   requests: { data: [], fetched: false },
@@ -36,8 +36,8 @@ export const unfriend = createAsyncThunk(
       const res = await axios.delete(`${domain}/api/friendship/delete/${id}`, {
         headers: { Authorization: thunkAPI.getState().user.token },
       });
-      thunkAPI.dispatch(getRequests());
-      thunkAPI.dispatch(getSentRequests());
+      // thunkAPI.dispatch(getRequests());
+      // thunkAPI.dispatch(getSentRequests());
       return id;
     } catch (err) {
       console.log(err);
@@ -85,10 +85,15 @@ export const fetchFriendAvatar = createAsyncThunk(
   `${name}/getFriendAvatar`,
   async ({ friendId, avatarId, type }, thunkAPI) => {
     if (avatarId) {
-      const avatarSrc = await avatarFetch(avatarId, thunkAPI);
-      return { friendId, avatarSrc, type };
+      try {
+        const avatarSrc = await avatarFetch(avatarId, thunkAPI);
+        return { friendId, avatarSrc, type };
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
     }
-    return "";
+    return { friendId, avatarSrc: "", type };
   }
 );
 
@@ -99,6 +104,7 @@ export const getFriendList = createAsyncThunk(
       const res = await axios.get(`${domain}/api/friendship`, {
         headers: { Authorization: thunkAPI.getState().user.token },
       });
+
       return { data: res.data, fetched: true };
     } catch (err) {
       console.log(err);
@@ -181,25 +187,46 @@ export const friendsSlice = createSlice({
       state.requests.fetched = action.payload.fetched;
     },
     [unfriend.fulfilled]: (state, action) => {
-      state.friends.data = state.friends.data.filter(
-        (friend) => friend.id !== action.payload
-      );
+      let [friendObj, type] = [
+        state.friends.data.find((friend) => friend.id === action.payload),
+        1,
+      ];
+      if (!friendObj)
+        [friendObj, type] = [
+          state.requests.data.find((friend) => friend.id === action.payload),
+          2,
+        ];
+
+      if (type === 1)
+        state.friends.data = state.friends.data.filter(
+          (friend) => friend.id !== friendObj.id
+        );
+
+      if (type === 2)
+        state.requests.data = state.requests.data.filter(
+          (friend) => friend.id !== friendObj.id
+        );
+
+      state.suggests.data.push(friendObj);
     },
     [makeRequest.fulfilled]: (state, action) => {},
     [fetchFriendAvatar.fulfilled]: (state, action) => {
-      const { friendId, avatarSrc, type } = action.payload;
-      let arrFriends = [];
+      if (action.payload) {
+        const { friendId, avatarSrc, type } = action.payload;
+        let arrFriends = [];
 
-      switch (type) {
-        case "friends":
-          arrFriends = state.friends.data;
-          break;
-        case "suggests":
-          arrFriends = state.suggests.data;
-          break;
+        switch (type) {
+          case "friends":
+            arrFriends = state.friends.data;
+            state.friends.fetchedFriendAvatar = true;
+            break;
+          case "suggests":
+            arrFriends = state.suggests.data;
+            break;
+        }
+        const friend = arrFriends.find((friend) => friend.id === friendId);
+        if (friend) friend.avatarSrc = avatarSrc;
       }
-      const friend = arrFriends.find((friend) => friend.id === friendId);
-      if (friend) friend.avatarSrc = avatarSrc;
     },
   },
 });

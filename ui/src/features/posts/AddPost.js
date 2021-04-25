@@ -30,10 +30,10 @@ const AddPost = React.memo(() => {
       content: yup.string().required("This field is required"),
     }),
     onSubmit: (values, formikBags) => {
-      formikBags.resetForm();
-      setFile(null);
       let sendValues = { ufile: file, content: values.content };
       dispatch(addPost(sendValues));
+      formikBags.resetForm();
+      setFile(null);
     },
   });
   const { values, errors, handleChange, handleBlur, handleSubmit } = formik;

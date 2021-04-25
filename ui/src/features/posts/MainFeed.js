@@ -1,20 +1,15 @@
 import React, { useEffect, useMemo } from "react";
-import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import Friends from "../friends/Friends";
 import AddPost from "./AddPost";
-import { getPost } from "./postsSlice";
 import { Col, Container, Row } from "reactstrap";
 import SuggestedFriends from "../friends/SuggestedFriends";
 import { getISOStringNow } from "../../configs/normalizeFunc";
 import Posts from "./Posts";
 import { Link } from "react-router-dom";
+import Icon, { UsergroupAddOutlined } from "@ant-design/icons";
 
 export default function MainFeed() {
-  const dispatch = useDispatch();
-
-  const token = useSelector((state) => state.user.token);
-
   return (
     <Container fluid={true} className="posts my-4">
       <Row>
@@ -24,7 +19,7 @@ export default function MainFeed() {
               className="user d-flex align-items-center rounded cursor-pointer"
               to="/requests"
             >
-              <AiOutlineUsergroupAdd className="user-icon" />{" "}
+              <UsergroupAddOutlined className="user-icon" />{" "}
               <span className="username">Friends</span>
             </Link>
           </section>
@@ -38,7 +33,6 @@ export default function MainFeed() {
           className="d-none d-md-block"
           style={{ maxHeight: "100vh", overflowY: "auto" }}
         >
-          {/* <SuggestedFriends /> */}
           <Friends />
         </Col>
       </Row>

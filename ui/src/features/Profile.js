@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
-import { AiOutlineUser } from "react-icons/ai";
-import { BiComment, BiLike } from "react-icons/bi";
+import Icon, { UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, CardFooter, Col, Container, Jumbotron, Row } from "reactstrap";
 import {
@@ -51,19 +50,22 @@ const Profile = React.memo(function Profile(props) {
   const requests = useSelector((state) => state.friends.requests);
   const sentRequests = useSelector((state) => state.friends.sentRequests);
   const user = useSelector((state) => state.user.data);
+  const token = useSelector((state) => state.user.token);
   useEffect(() => {
-    dispatch(getProfile(id));
-    dispatch(getProfilePost(id));
-    if (!friends.fetched) {
-      dispatch(getFriendList());
+    if (token) {
+      dispatch(getProfile(id));
+      dispatch(getProfilePost(id));
+      if (!friends.fetched) {
+        dispatch(getFriendList());
+      }
+      if (!sentRequests.fetched) {
+        dispatch(getSentRequests());
+      }
+      if (!requests.fetched) {
+        dispatch(getRequests());
+      }
     }
-    if (!sentRequests.fetched) {
-      dispatch(getSentRequests());
-    }
-    if (!requests.fetched) {
-      dispatch(getRequests());
-    }
-  }, []);
+  }, [token]);
   useEffect(() => {
     if (profile.avatar) {
       dispatch(fetchAvatar({ type: "profile", avatarId: profile.avatar }));
@@ -97,7 +99,23 @@ const Profile = React.memo(function Profile(props) {
         <div className="jumbo-box">
           <div className="box">
             {/* image */}
-            <AiOutlineUser className="icon" />
+            {profile.avatarSrc ? (
+              <img
+                src={profile.avatarSrc}
+                style={{
+                  height: 200,
+                  width: 200,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+              />
+            ) : (
+              <UserOutlined
+                className="user-icon"
+                className="icon"
+                style={{ fontSize: 180 }}
+              />
+            )}
           </div>
           <h1 className="mt-2">{profile.name}</h1>
           <div>

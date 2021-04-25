@@ -3,7 +3,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import React from "react";
-import { BiError } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 import { register } from "./userSlice";
 import {
@@ -33,7 +32,10 @@ export default function Register() {
       dob: yup.string().required("Date of birth is required"),
       email: yup.string().required("Email is required").email(),
       name: yup.string().required("Name is required").max(50),
-      password: yup.string().required("Password is required").min(6, "Password length must be between 6 and 128"),
+      password: yup
+        .string()
+        .required("Password is required")
+        .min(6, "Password length must be between 6 and 128"),
       username: yup.string().required("Username is required"),
     }),
     onSubmit: async (values) => {
@@ -91,7 +93,7 @@ export default function Register() {
                   addonType="append"
                   className="tooltip-input-error"
                 >
-                  <BiError />
+                  <box-icon name="error"></box-icon>
                   <Tooltip
                     placement="right"
                     isOpen={focused.name}
@@ -125,7 +127,7 @@ export default function Register() {
                   addonType="append"
                   className="tooltip-input-error"
                 >
-                  <BiError />
+                  <box-icon name="error"></box-icon>
                   <Tooltip
                     placement="right"
                     isOpen={focused.email}
@@ -143,6 +145,7 @@ export default function Register() {
               <DatePicker
                 autoComplete="off"
                 className="form-control"
+                dateFormat="dd/MM/yyyy"
                 id="dob"
                 name="dob"
                 onFocus={(e) => handleFocus(e, true)}
@@ -162,7 +165,7 @@ export default function Register() {
                   addonType="append"
                   className="tooltip-input-error"
                 >
-                  <BiError />
+                  <box-icon name="error"></box-icon>
                   <Tooltip placement="right" isOpen={focused.dob} target="dob">
                     {errors.dob}
                   </Tooltip>
@@ -193,7 +196,7 @@ export default function Register() {
                   addonType="append"
                   className="tooltip-input-error"
                 >
-                  <BiError />
+                  <box-icon name="error"></box-icon>
                   <Tooltip
                     placement="right"
                     isOpen={focused.username}
@@ -227,7 +230,7 @@ export default function Register() {
                   addonType="append"
                   className="tooltip-input-error"
                 >
-                  <BiError />
+                  <box-icon name="error"></box-icon>
                   <Tooltip
                     placement="right"
                     isOpen={focused.password}
@@ -244,7 +247,12 @@ export default function Register() {
               Register
             </button>
           </FormGroup>
-          <p className="m-0 d-flex justify-content-between align-items-center">Already have a account? <Link to="/login" className="btn s-outline s-bold">Sign In</Link></p>
+          <p className="m-0 d-flex justify-content-between align-items-center">
+            Already have a account?{" "}
+            <Link to="/login" className="btn s-outline s-bold">
+              Sign In
+            </Link>
+          </p>
         </form>
       </div>
     </div>
