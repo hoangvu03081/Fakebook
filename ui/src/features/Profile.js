@@ -67,9 +67,7 @@ const Profile = React.memo(function Profile(props) {
     }
   }, [token]);
   useEffect(() => {
-    console.log(123);
     if (profile.avatar) {
-      console.log(profile.avatar);
       dispatch(fetchAvatar({ type: "profile", avatarId: profile.avatar }));
     }
   }, [profile.avatar]);

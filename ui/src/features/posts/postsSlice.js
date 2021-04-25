@@ -17,7 +17,6 @@ export const unlikePost = createAsyncThunk(
         {},
         { headers: { Authorization: thunkAPI.getState().user.token } }
       );
-      console.log(res.data);
       return id;
     } catch (err) {
       console.log(err);

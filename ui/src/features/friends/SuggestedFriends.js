@@ -31,7 +31,16 @@ export default function SuggestedFriends() {
         })
       );
     });
-  }, [suggests.data.length]);
+    requests.data.forEach((friend) => {
+      dispatch(
+        fetchFriendAvatar({
+          friendId: friend.id,
+          avatarId: friend.avatar,
+          type: "requests",
+        })
+      );
+    });
+  }, [suggests.data.length, requests.data.length]);
 
   useEffect(() => {
     return () => {

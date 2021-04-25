@@ -158,7 +158,6 @@ export const getSentRequests = createAsyncThunk(
   }
 );
 
-
 export const friendsSlice = createSlice({
   name,
   initialState,
@@ -224,6 +223,9 @@ export const friendsSlice = createSlice({
           case "suggests":
             arrFriends = state.suggests.data;
             break;
+          case "requests":
+            arrFriends = state.requests.data;
+            break;
         }
         const friend = arrFriends.find((friend) => friend.id === friendId);
         if (friend) friend.avatarSrc = avatarSrc;
@@ -231,6 +233,6 @@ export const friendsSlice = createSlice({
     },
   },
 });
-export const {logout} = friendsSlice.actions;
+export const { logout } = friendsSlice.actions;
 
 export default friendsSlice.reducer;

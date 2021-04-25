@@ -21,6 +21,7 @@ function Posts({ type, id }) {
   useEffect(() => {
     if (
       token &&
+      id &&
       (fetchedFriendAvatar || friends.length === 0) &&
       fetchedAvatar
     ) {
