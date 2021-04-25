@@ -75,10 +75,9 @@ public class User{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @FullTextField
     private String username;
 
-    @FullTextField
+    @FullTextField(analyzer = "autocomplete-indexing", searchAnalyzer = "autocomplete-query")
     private String name;
 
     private String email;
