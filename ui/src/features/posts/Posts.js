@@ -22,7 +22,7 @@ function Posts({ type, id }) {
   useEffect(() => {
     if (
       token &&
-      id &&
+      (id || type === "post" || friends.length === 0) &&
       (fetchedFriendAvatar || friends.length === 0 || type === "profilePost") &&
       fetchedAvatar
     ) {
