@@ -61,6 +61,8 @@ public class FakebookApplication {
         context.getBean(SearchService.class).initIndex();
     }
 
+
+    /*
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -69,6 +71,9 @@ public class FakebookApplication {
                 registry.addMapping("/**").allowedOrigins("http://localhost:3000");
             }
         };
-    }
+    }*/
+
+
+
 
 }

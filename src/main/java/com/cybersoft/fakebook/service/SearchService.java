@@ -152,7 +152,7 @@ public class SearchService {
         SearchSession searchSession = Search.session( entityManager );
         SearchResult<User> searchResult = searchSession.search( User.class )
                 .where( f -> f.match()
-                        .fields( "name","username")
+                        .fields( "name")
                         .matching( queryString ) )
                 .fetch( 20 );
         List<User> hits = searchResult.hits();
