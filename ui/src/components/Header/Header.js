@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlineUser } from "react-icons/ai";
+import Icon, { UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -70,7 +70,7 @@ const Header = React.forwardRef((props, ref) => {
                   {userData.avatarSrc ? (
                     <img className="user-icon" src={userData.avatarSrc} />
                   ) : (
-                    <AiOutlineUser className="user-icon" />
+                    <UserOutlined className="user-icon" />
                   )}
                   <span className="username">{userData.name}</span>
                 </div>

@@ -12,9 +12,33 @@
   &:hover {
     background-color: $gray-300;
   }
+
+  box-icon {
+    width: 16px;
+    height: 16px;
+  }
 }
 .reaction-box {
   @extend %post-box;
+  transition: transform $durationSlow ease-in;
+  &.active box-icon {
+    animation: like $duration linear forwards;
+  }
+  &:active {
+    transform: scale(0.9);
+  }
+  box-icon[type="solid"] {
+    fill: $blue;
+  }
+}
+@keyframes like {
+  0%,
+  100% {
+    transform: initial;
+  }
+  50% {
+    transform: rotate(-25deg) scale(1.1) translateX(-1px);
+  }
 }
 .comment-box {
   @extend %post-box;

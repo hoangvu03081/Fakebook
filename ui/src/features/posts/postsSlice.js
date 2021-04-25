@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import axios from "axios";
 import { post } from "jquery";
 import { domain } from "../../configs/constants";
@@ -7,6 +7,41 @@ import avatarFetch from "../axiosActions/avatarAction";
 
 const name = "posts";
 const initialState = { posts: [] };
+
+export const unlikePost = createAsyncThunk(
+  `${name}/unlikePost`,
+  async (id, thunkAPI) => {
+    try {
+      const res = await axios.put(
+        `${domain}/api/post/unlike/${id}`,
+        {},
+        { headers: { Authorization: thunkAPI.getState().user.token } }
+      );
+      console.log(res.data);
+      return id;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
+);
+
+export const likePost = createAsyncThunk(
+  `${name}/likePost`,
+  async (id, thunkAPI) => {
+    try {
+      const res = await axios.put(
+        `${domain}/api/post/like/${id}`,
+        {},
+        { headers: { Authorization: thunkAPI.getState().user.token } }
+      );
+      return id;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
+);
 
 export const addPost = createAsyncThunk(
   `${name}/addPost`,
@@ -57,6 +92,7 @@ export const getPost = createAsyncThunk(
       });
 
       const friends = state.friends.friends;
+
       res.data = res.data.map((post) => {
         if (post.userId === state.user.data.id)
           return { ...post, userInfo: state.user.data };
@@ -117,6 +153,24 @@ export const postsSlice = createSlice({
     },
   },
   extraReducers: {
+    [likePost.fulfilled]: (state, action) => {
+      if (action.payload) {
+        const post = state.posts.find((post) => post.id === action.payload);
+        if (post) {
+          ++post.likes;
+          post.liked = true;
+        }
+      }
+    },
+    [unlikePost.fulfilled]: (state, action) => {
+      if (action.payload) {
+        const post = state.posts.find((post) => post.id === action.payload);
+        if (post) {
+          --post.likes;
+          post.liked = false;
+        }
+      }
+    },
     [getPost.fulfilled]: (state, action) => {
       state.posts = action.payload;
     },

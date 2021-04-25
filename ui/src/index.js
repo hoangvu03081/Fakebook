@@ -6,6 +6,8 @@ import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import { Provider } from "react-redux";
 import store from "./features/store";
+import "boxicons";
+import "../node_modules/boxicons/dist/boxicons"
 
 export const history = createBrowserHistory();
 

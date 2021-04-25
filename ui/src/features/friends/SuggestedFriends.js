@@ -12,11 +12,13 @@ export default function SuggestedFriends() {
   const dispatch = useDispatch();
   const suggests = useSelector((state) => state.friends.suggests);
   const requests = useSelector((state) => state.friends.requests);
-
+  const token = useSelector((state) => state.user.token);
   useEffect(async () => {
-    dispatch(getSuggestedFriends());
-    dispatch(getRequests());
-  }, []);
+    if (token) {
+      dispatch(getSuggestedFriends());
+      dispatch(getRequests());
+    }
+  }, [token]);
   useEffect(async () => {
     if (suggests.fetched) {
       suggests.data.forEach((friend) => {

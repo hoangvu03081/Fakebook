@@ -3,8 +3,6 @@ import * as yup from "yup";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "./userSlice";
-import { BiError } from "react-icons/bi";
-import { GrGroup } from "react-icons/gr";
 
 import {
   Form,
@@ -15,8 +13,9 @@ import {
   Label,
   Tooltip,
 } from "reactstrap";
-import { AiOutlineYoutube } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import Icon, { YoutubeOutlined } from "@ant-design/icons";
+import { Group } from "grommet-icons";
 
 export const transformInitialVals = (initialValues) => {
   const res = {};
@@ -35,7 +34,10 @@ export default function Login() {
       password: "",
     },
     validationSchema: yup.object({
-      password: yup.string().required("Password is required").min(6, "Password length must be between 6 and 128"),
+      password: yup
+        .string()
+        .required("Password is required")
+        .min(6, "Password length must be between 6 and 128"),
       username: yup.string().required("Username is required"),
     }),
     onSubmit: (values) => {
@@ -68,10 +70,23 @@ export default function Login() {
             <span className="bottom" style={{ width: 100 }}></span>
           </h1>
           <div>
-            <AiOutlineYoutube
-              style={{ width: 30, height: 30, marginRight: 10 }}
-            />
-            <GrGroup style={{ width: 20, height: 20 }} />
+            <div className="d-flex align-items-center">
+              <YoutubeOutlined
+                style={{
+                  width: 30,
+                  height: 30,
+                  marginRight: 10,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  fontSize: "25px",
+                  color: "rgb(59, 59, 59)",
+                }}
+              />
+              <Group
+                style={{ width: 20, height: 20, stroke: "rgb(59, 59, 59)" }}
+              />
+            </div>
           </div>
         </div>
         <FormGroup>
@@ -96,7 +111,7 @@ export default function Login() {
                 addonType="append"
                 className="tooltip-input-error"
               >
-                <BiError />
+                <box-icon name="error"></box-icon>
                 <Tooltip
                   placement="right"
                   isOpen={focused.username}
@@ -130,7 +145,7 @@ export default function Login() {
                 addonType="append"
                 className="tooltip-input-error"
               >
-                <BiError />
+                <box-icon name="error"></box-icon>
                 <Tooltip
                   placement="right"
                   isOpen={focused.password}
@@ -158,7 +173,9 @@ export default function Login() {
 
         <p className="d-flex align-items-center mt-3 justify-content-between">
           Don't have an account?{" "}
-          <Link to="/register" className="btn s-outline">Sign Up</Link>
+          <Link to="/register" className="btn s-outline">
+            Sign Up
+          </Link>
         </p>
       </Form>
     </div>

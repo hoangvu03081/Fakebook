@@ -10080,6 +10080,9 @@ a {
   font-size: 20px;
   z-index: 10;
 }
+.input-group .tooltip-input-error box-icon {
+  fill: #dc3545;
+}
 
 .tooltip.bs-tooltip-auto[x-placement^=left] .arrow::before {
   border-left-color: #dc3545 !important;
@@ -10252,7 +10255,32 @@ a {
 .comment-box:hover, .reaction-box:hover {
   background-color: #dee2e6;
 }
+.comment-box box-icon, .reaction-box box-icon {
+  width: 16px;
+  height: 16px;
+}
 
+.reaction-box {
+  transition: transform 0.5s ease-in;
+}
+.reaction-box.active box-icon {
+  animation: like 0.25s linear forwards;
+}
+.reaction-box:active {
+  transform: scale(0.9);
+}
+.reaction-box box-icon[type=solid] {
+  fill: #007bff;
+}
+
+@keyframes like {
+  0%, 100% {
+    transform: initial;
+  }
+  50% {
+    transform: rotate(-25deg) scale(1.1) translateX(-1px);
+  }
+}
 .user {
   height: 48px;
   padding: 0.25rem;
@@ -10266,6 +10294,7 @@ a {
   padding: 4px;
   width: 40px;
   height: 40px;
+  font-size: 32px;
 }
 .user-icon-lg {
   width: 50px;
@@ -10294,7 +10323,6 @@ a {
 .profile-jumbotron .box {
   border: 2px solid #061f61;
   border-radius: 50%;
-  padding: 20px;
   position: relative;
 }
 .profile-jumbotron .box .icon {

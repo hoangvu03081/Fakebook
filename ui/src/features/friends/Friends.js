@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
-import { AiOutlineUser } from "react-icons/ai";
+import Icon, { UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchFriendAvatar, getFriendList } from "./friendsSlice";
@@ -15,7 +15,7 @@ export const renderFriends = (friends) => {
       {friend.avatarSrc ? (
         <img className="user-icon" src={friend.avatarSrc} alt="" />
       ) : (
-        <AiOutlineUser className="user-icon" />
+        <UserOutlined className="user-icon" />
       )}
       <span className="username">{friend.name}</span>
     </Link>
@@ -25,10 +25,12 @@ export const renderFriends = (friends) => {
 export default function Friends() {
   const dispatch = useDispatch();
   const friends = useSelector((state) => state.friends.friends);
-
+  const token = useSelector((state) => state.user.token);
   useEffect(async () => {
-    dispatch(getFriendList());
-  }, []);
+    if (token) {
+      dispatch(getFriendList());
+    }
+  }, [token]);
 
   useEffect(async () => {
     if (friends.fetched) {
@@ -45,9 +47,7 @@ export default function Friends() {
   }, [friends.fetched]);
 
   return (
-    <section
-      className="contacts p-4 bg-light rounded w-100 mb-3"
-    >
+    <section className="contacts p-4 bg-light rounded w-100 mb-3">
       <h4>Contacts</h4>
       {renderFriends(friends.data)}
     </section>

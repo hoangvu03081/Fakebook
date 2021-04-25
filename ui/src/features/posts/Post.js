@@ -1,13 +1,22 @@
+import Icon, { UserOutlined } from "@ant-design/icons";
 import formatDistance from "date-fns/formatDistance";
-import React, { useEffect } from "react";
-import { AiOutlineUser } from "react-icons/ai";
-import { BiComment, BiLike } from "react-icons/bi";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Card, CardFooter } from "reactstrap";
-import { fetchPostImage } from "./postsSlice";
+import { fetchPostImage, likePost, unlikePost } from "./postsSlice";
 
 export default function Post({ post }) {
   const dispatch = useDispatch();
+  const [animationLike, setAnimationLike] = useState(false);
+  const onToggleLike = () => {
+    if (post.liked === false) {
+      setAnimationLike(true);
+      dispatch(likePost(post.id));
+    } else {
+      dispatch(unlikePost(post.id));
+      setAnimationLike(false);
+    }
+  };
 
   useEffect(() => {
     if (post.imageId[0])
@@ -19,7 +28,7 @@ export default function Post({ post }) {
   return (
     <Card key={post.id} className="my-3">
       <div className="py-2 px-3">
-        <div className="d-flex align-items-center">
+        <div className="d-flex align-items-center" style={{ marginTop: 2 }}>
           {userInfo.avatarSrc ? (
             <img
               src={userInfo.avatarSrc}
@@ -27,9 +36,9 @@ export default function Post({ post }) {
               className="user-icon user-icon-lg"
             />
           ) : (
-            <AiOutlineUser className="user-icon user-icon-lg" />
+            <UserOutlined className="user-icon" />
           )}
-          <div className="card-header-info">
+          <div className="card-header-info" style={{ paddingTop: 3 }}>
             <h5>{userInfo.name}</h5>
             <span className="text-secondary">
               {formatDistance(Date.parse(post.uploadTime), new Date(), {
@@ -50,12 +59,22 @@ export default function Post({ post }) {
       ) : null}
       <CardFooter className="py-2 px-3">
         <div className="d-flex">
-          <div className="reaction-box">
-            <BiLike className="mt-1 mr-1" />
-            <span>123</span>
+          <div
+            className={`reaction-box ${animationLike ? "active" : ""}`}
+            onClick={onToggleLike}
+          >
+            <div className="mt-1 mr-1">
+              <box-icon
+                name="like"
+                type={post.liked ? "solid" : "regular"}
+              ></box-icon>
+            </div>
+            <span>{post.likes}</span>
           </div>
           <div className="comment-box">
-            <BiComment className="mt-1 mr-1" />
+            <div className="mt-1 mr-1">
+              <box-icon name="comment"></box-icon>
+            </div>
             <span>123</span>
           </div>
         </div>

@@ -7,7 +7,14 @@ import avatarFetch from "../axiosActions/avatarAction";
 import { friendsSlice } from "../friends/friendsSlice";
 import { postsSlice } from "../posts/postsSlice";
 
-const initialState = { token: "", isValidToken: false, data: {}, profile: {} };
+const initialState = {
+  token: "",
+  dispatched: false,
+  fetchedAvatar: false,
+  isValidToken: false,
+  data: {},
+  profile: {},
+};
 
 export const getProfile = createAsyncThunk(
   "user/getProfile",
@@ -31,6 +38,7 @@ export const isValidToken = createAsyncThunk(
   "user/isValidToken",
   async (_, thunkAPI) => {
     try {
+      thunkAPI.dispatch(userSlice.actions.dispatched());
       // get token from previos login
       const uToken = localStorage.getItem(token);
 
@@ -92,6 +100,12 @@ export const uploadAvatar = createAsyncThunk(
           "Content-Type": "multipart/form-data",
         },
       });
+      await thunkAPI.dispatch(
+        fetchAvatar({
+          type: "user",
+          avatarId: thunkAPI.getState().user.data.avatar,
+        })
+      );
       return res.data;
     } catch (err) {
       return "";
@@ -112,7 +126,7 @@ export const register = async (values) => {
   try {
     // constructing dob
     const y = values.dob.getFullYear();
-    let m = values.dob.getMonth();
+    let m = values.dob.getMonth() + 1;
     m = m < 10 ? "0" + m : m;
     let d = values.dob.getDate();
     d = d < 10 ? "0" + d : d;
@@ -167,6 +181,9 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    dispatched(state, action) {
+      state.dispatched = true;
+    },
     logout(state, action) {
       return initialState;
     },
@@ -189,6 +206,7 @@ const userSlice = createSlice({
       switch (type) {
         case "user":
           state.data.avatarSrc = avatarSrc;
+          state.fetchedAvatar = true;
           break;
         case "profile":
           state.profile.avatarSrc = avatarSrc;

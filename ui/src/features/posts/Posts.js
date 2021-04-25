@@ -13,9 +13,12 @@ function Posts({ type, id }) {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts.posts);
   const token = useSelector((state) => state.user.token);
-  const fetchedFriends = useSelector((state) => state.friends.friends.fetched);
-  useEffect(async () => {
-    if (token && fetchedFriends) {
+  const fetchedFriendAvatar = useSelector(
+    (state) => state.friends.friends.fetchedFriendAvatar
+  );
+  const fetchedAvatar = useSelector((state) => state.user.fetchedAvatar);
+  useEffect(() => {
+    if (token && fetchedFriendAvatar && fetchedAvatar) {
       const ISOString = getISOStringNow();
       switch (type) {
         case "post":
@@ -26,7 +29,8 @@ function Posts({ type, id }) {
           break;
       }
     }
-  }, [type, token, fetchedFriends]);
+  }, [token, fetchedFriendAvatar, fetchedAvatar]);
+
   return <section className="posts">{renderPosts(posts)}</section>;
 }
 export default Posts;
