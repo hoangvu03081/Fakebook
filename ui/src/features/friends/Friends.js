@@ -31,20 +31,25 @@ export default function Friends() {
   }, []);
 
   useEffect(async () => {
-    if (friends.length) {
-      friends.forEach((friend) => {
-        dispatch(fetchFriendAvatar({friendId: friend.id, avatarId: friend.avatar, type: "friends"}));
+    if (friends.fetched) {
+      friends.data.forEach((friend) => {
+        dispatch(
+          fetchFriendAvatar({
+            friendId: friend.id,
+            avatarId: friend.avatar,
+            type: "friends",
+          })
+        );
       });
     }
-  }, [friends.length]);
+  }, [friends.fetched]);
 
   return (
     <section
       className="contacts p-4 bg-light rounded w-100 mb-3"
-      style={{ left: 0, right: 0, top: 0 }}
     >
       <h4>Contacts</h4>
-      {renderFriends(friends)}
+      {renderFriends(friends.data)}
     </section>
   );
 }

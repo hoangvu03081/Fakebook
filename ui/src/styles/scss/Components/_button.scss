@@ -1,23 +1,27 @@
-.btn.s {
+%btn {
   padding-left: $spacing * 3;
   padding-right: $spacing * 3;
-  background: linear-gradient(to right, $u-primary, $u-primary-bold 80%);
-  background-size: 200% 100%;
-  background-position: 10% center;
   border: none;
   color: $white;
   border-radius: $wideRadius;
-  transition: background-position $durationSlow;
   width: 100%;
-
+}
+%btn-outline {
+  background: transparent;
+  border-radius: $wideRadius;
+  padding-left: $spacing * 3;
+  padding-right: $spacing * 3;
+}
+.btn.s {
+  @extend %btn;
+  background: linear-gradient(to right, $u-primary, $u-primary-bold 80%);
+  transition: all $duration;
 
   &-outline {
-    background: transparent;
+    @extend %btn-outline;
     border: 1px solid $u-primary;
-    border-radius: $wideRadius;
     color: $u-primary;
-    padding-left: $spacing * 3;
-    padding-right: $spacing * 3;
+
     &:hover {
       background: $u-primary;
       color: $white;
@@ -31,14 +35,23 @@
       background-color: $u-primary-bold;
     }
   }
-  
+
   &:hover {
-    background-position: 80% center;
+    background: lighten($u-primary-bold, 10);
   }
   &:active {
     box-shadow: none;
   }
   &:focus {
     box-shadow: none;
+  }
+}
+
+.btn.d {
+  @extend %btn;
+  background: linear-gradient(to right, $gray-600, $gray-700);
+  transition: all $duration;
+  &:hover {
+    background: $gray-600;
   }
 }

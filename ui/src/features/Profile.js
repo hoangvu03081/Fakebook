@@ -4,34 +4,92 @@ import { AiOutlineUser } from "react-icons/ai";
 import { BiComment, BiLike } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, CardFooter, Col, Container, Jumbotron, Row } from "reactstrap";
-import { getFriendList } from "./friends/friendsSlice";
+import {
+  acceptRequest,
+  getFriendList,
+  getRequests,
+  getSentRequests,
+  makeRequest,
+  unfriend,
+} from "./friends/friendsSlice";
 import { getProfilePost } from "./posts/postsSlice";
 import { fetchAvatar, getProfile } from "./user/userSlice";
-import { formatDistance } from "date-fns";
-import { renderPosts } from "./posts/Posts";
+import Posts from "./posts/Posts";
 
-const isFriend = (profile, friends) => {
-  return friends.find((friend) => friend.id === profile.id);
+const Button = ({ type, content, id }) => {
+  const dispatch = useDispatch();
+  if (type) type = type.toLowerCase();
+  let onClick = null;
+  switch (type) {
+    case "accept":
+      onClick = () => dispatch(acceptRequest(id));
+    case "addfriend":
+      if (!onClick) onClick = () => dispatch(makeRequest(id));
+      return (
+        <button className="btn s mx-2" onClick={onClick}>
+          {content}
+        </button>
+      );
+    case "decline":
+    case "unfriend":
+    case "unsent":
+      onClick = () => dispatch(unfriend(id));
+      return (
+        <button className="btn d mx-2" onClick={onClick}>
+          {content}
+        </button>
+      );
+    default:
+      return null;
+  }
 };
-
-export default function Profile(props) {
+const Profile = React.memo(function Profile(props) {
   const dispatch = useDispatch();
   const { id } = props.match.params;
   const profile = useSelector((state) => state.user.profile);
   const friends = useSelector((state) => state.friends.friends);
-  const posts = useSelector((state) => state.posts.posts);
-
+  const requests = useSelector((state) => state.friends.requests);
+  const sentRequests = useSelector((state) => state.friends.sentRequests);
+  const user = useSelector((state) => state.user.data);
   useEffect(() => {
     dispatch(getProfile(id));
     dispatch(getProfilePost(id));
-    if (!friends.length) dispatch(getFriendList());
+    if (!friends.fetched) {
+      dispatch(getFriendList());
+    }
+    if (!sentRequests.fetched) {
+      dispatch(getSentRequests());
+    }
+    if (!requests.fetched) {
+      dispatch(getRequests());
+    }
   }, []);
-
   useEffect(() => {
     if (profile.avatar) {
       dispatch(fetchAvatar({ type: "profile", avatarId: profile.avatar }));
     }
   }, [profile.avatar]);
+
+  const renderedBtn = () => {
+    if (friends.fetched && requests.fetched && sentRequests.fetched) {
+      if (user.id === profile.id) return <Button />;
+      else if (friends.data.find((friend) => friend.id === profile.id))
+        return <Button type="unfriend" content="Unfriend" id={profile.id} />;
+      else if (requests.data.find((friend) => friend.id === profile.id))
+        return (
+          <div className="d-flex" style={{ width: 400 }}>
+            <Button type="accept" content="Accept Request" id={profile.id} />
+            <Button type="decline" content="Decline Request" id={profile.id} />
+          </div>
+        );
+      else if (sentRequests.data.find((friend) => friend.id === profile.id))
+        return (
+          <Button type="unsent" content="Unsent Request" id={profile.id} />
+        );
+      return <Button type="addFriend" content="Add Friend" id={profile.id} />;
+    }
+    return null;
+  };
 
   return (
     <main>
@@ -43,21 +101,19 @@ export default function Profile(props) {
           </div>
           <h1 className="mt-2">{profile.name}</h1>
           <div>
-            {isFriend(profile, friends) ? (
-              <button className="btn btn-danger">Unfriend</button>
-            ) : (
-              <button className="btn btn-primary">Add Friend</button>
-            )}
+            {/* render the correct button */}
+            {renderedBtn()}
           </div>
         </div>
       </Jumbotron>
       <Container fluid={true} className="posts my-md-4">
         <Row className="justify-content-center">
           <Col lg="6">
-            <section className="posts">{renderPosts(posts)}</section>
+            <Posts type="profilePost" id={profile.id} />
           </Col>
         </Row>
       </Container>
     </main>
   );
-}
+});
+export default Profile;

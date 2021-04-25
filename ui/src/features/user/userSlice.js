@@ -4,6 +4,8 @@ import { history } from "../..";
 import { MySwal } from "../../components/Swal/Swal";
 import { domain, token } from "../../configs/constants";
 import avatarFetch from "../axiosActions/avatarAction";
+import { friendsSlice } from "../friends/friendsSlice";
+import { postsSlice } from "../posts/postsSlice";
 
 const initialState = { token: "", isValidToken: false, data: {}, profile: {} };
 
@@ -125,8 +127,9 @@ export const register = async (values) => {
     };
 
     // try to register
-    await axios.post(`${domain}/api/auth/register`, userDto);
-
+    await axios.post(`${domain}/api/auth/register`, userDto, {
+      headers: { "Content-Type": "application/json" },
+    });
     // if success alert
     const res = await MySwal.fire({
       title: "Register succeed!",
@@ -153,14 +156,19 @@ export const register = async (values) => {
   }
 };
 
+export const logout = createAsyncThunk("user/logout", async (_, thunkAPI) => {
+  thunkAPI.dispatch(userSlice.actions.logout());
+  thunkAPI.dispatch(postsSlice.actions.logout());
+  thunkAPI.dispatch(friendsSlice.actions.logout());
+  history.push("/login");
+});
+
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
     logout(state, action) {
-      state.isValidToken = false;
-      state.data = {};
-      localStorage.removeItem(token);
+      return initialState;
     },
   },
   extraReducers: {
@@ -192,7 +200,5 @@ const userSlice = createSlice({
     },
   },
 });
-
-export const { logout } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -8,7 +8,6 @@ import {
   logout,
   uploadAvatar,
 } from "../../features/user/userSlice";
-import { history } from "../..";
 import {
   Container,
   Collapse,
@@ -27,7 +26,7 @@ import {
   CustomInput,
 } from "reactstrap";
 
-export default function Header() {
+const Header = React.forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.user.data);
 
@@ -57,7 +56,7 @@ export default function Header() {
   }, [userData.avatar]);
 
   return (
-    <Navbar color="light" light expand="md" className="main-navbar">
+    <Navbar color="light" light expand="md" className="main-navbar" ref={ref}>
       <Container fluid={true} className="px-4">
         <NavbarBrand tag="div">
           <Link to="/">fakebook</Link>
@@ -116,4 +115,6 @@ export default function Header() {
       </Container>
     </Navbar>
   );
-}
+});
+
+export default Header;

@@ -1,4 +1,5 @@
 .user {
+  height: 48px;
   padding: map-get($spacers, 1);
   &:hover {
     background-color: darken($white, 10);

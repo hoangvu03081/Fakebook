@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { post } from "jquery";
 import { domain } from "../../configs/constants";
+import { getISOStringNow } from "../../configs/normalizeFunc";
 import avatarFetch from "../axiosActions/avatarAction";
 
 const name = "posts";
@@ -36,9 +37,8 @@ export const addPost = createAsyncThunk(
             Authorization: thunkAPI.getState().user.token,
           },
         });
-        console.log(res);
       }
-      thunkAPI.dispatch(getPost());
+      thunkAPI.dispatch(getPost(getISOStringNow()));
     } catch (err) {
       console.log(err);
     }
@@ -56,20 +56,21 @@ export const getPost = createAsyncThunk(
         params: { time: ISOString },
       });
 
-      const { friends } = state.friends;
-
+      const friends = state.friends.friends;
       res.data = res.data.map((post) => {
         if (post.userId === state.user.data.id)
           return { ...post, userInfo: state.user.data };
         else
           return {
             ...post,
-            userInfo: friends.find((friend) => friend.id === post.userId),
+            userInfo: friends.data.find((friend) => friend.id === post.userId),
           };
       });
+
       return res.data;
     } catch (err) {
-      console.log(err);
+      console.log("getPost error:", err);
+
       return [];
     }
   }
@@ -107,10 +108,14 @@ export const fetchPostImage = createAsyncThunk(
   }
 );
 
-const postsSlice = createSlice({
+export const postsSlice = createSlice({
   name,
   initialState,
-  reducers: {},
+  reducers: {
+    logout(state, action) {
+      return initialState;
+    },
+  },
   extraReducers: {
     [getPost.fulfilled]: (state, action) => {
       state.posts = action.payload;
