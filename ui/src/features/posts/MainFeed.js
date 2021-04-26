@@ -8,8 +8,20 @@ import { getISOStringNow } from "../../configs/normalizeFunc";
 import Posts from "./Posts";
 import { Link } from "react-router-dom";
 import Icon, { UsergroupAddOutlined } from "@ant-design/icons";
+import { getPost } from "./postsSlice";
 
 export default function MainFeed() {
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.user.token);
+  const posts = useSelector((state) => state.posts.posts);
+
+  useEffect(() => {
+    if (token) {
+      const ISOString = getISOStringNow();
+      dispatch(getPost({ ISOString, token }));
+    }
+  }, [token]);
+
   return (
     <Container fluid={true} className="posts my-4">
       <Row>
@@ -26,7 +38,7 @@ export default function MainFeed() {
         </Col>
         <Col md="6">
           <AddPost />
-          <Posts type="post" />
+          <Posts posts={posts} />
         </Col>
         <Col
           md="3"

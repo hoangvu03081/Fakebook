@@ -21,6 +21,7 @@ export const friendSearch = createAsyncThunk(
         headers: { Authorization: thunkAPI.getState().user.token },
         params: { query },
       });
+      console.log(res.data);
       return res.data;
     } catch (err) {
       console.log(err);
@@ -31,14 +32,17 @@ export const friendSearch = createAsyncThunk(
 
 export const unfriend = createAsyncThunk(
   `${name}/unfriend`,
-  async (id, thunkAPI) => {
+  async (profile, thunkAPI) => {
     try {
-      const res = await axios.delete(`${domain}/api/friendship/delete/${id}`, {
-        headers: { Authorization: thunkAPI.getState().user.token },
-      });
+      const res = await axios.delete(
+        `${domain}/api/friendship/delete/${profile.id}`,
+        {
+          headers: { Authorization: thunkAPI.getState().user.token },
+        }
+      );
       // thunkAPI.dispatch(getRequests());
       // thunkAPI.dispatch(getSentRequests());
-      return id;
+      return profile;
     } catch (err) {
       console.log(err);
     }
@@ -47,16 +51,14 @@ export const unfriend = createAsyncThunk(
 
 export const acceptRequest = createAsyncThunk(
   `${name}/acceptRequest`,
-  async (id, thunkAPI) => {
+  async (profile, thunkAPI) => {
     try {
       await axios.put(
-        `${domain}/api/friendship/accept/${id}`,
+        `${domain}/api/friendship/accept/${profile.id}`,
         {},
         { headers: { Authorization: thunkAPI.getState().user.token } }
       );
-      thunkAPI.dispatch(getRequests());
-      thunkAPI.dispatch(getFriendList());
-      return id;
+      return profile;
     } catch (err) {
       console.log(err);
     }
@@ -65,15 +67,15 @@ export const acceptRequest = createAsyncThunk(
 
 export const makeRequest = createAsyncThunk(
   `${name}/makeRequest`,
-  async (id, thunkAPI) => {
+  async (profile, thunkAPI) => {
     try {
       const res = await axios.post(
-        `${domain}/api/friendship/request/${id}`,
+        `${domain}/api/friendship/request/${profile.id}`,
         {},
         { headers: { Authorization: thunkAPI.getState().user.token } }
       );
-      thunkAPI.dispatch(getSentRequests());
-      return id;
+
+      return profile;
     } catch (err) {
       console.log(err);
     }
@@ -99,10 +101,10 @@ export const fetchFriendAvatar = createAsyncThunk(
 
 export const getFriendList = createAsyncThunk(
   `${name}/getFriendList`,
-  async (_, thunkAPI) => {
+  async (token, thunkAPI) => {
     try {
       const res = await axios.get(`${domain}/api/friendship`, {
-        headers: { Authorization: thunkAPI.getState().user.token },
+        headers: { Authorization: token },
       });
 
       return { data: res.data, fetched: true };
@@ -115,10 +117,10 @@ export const getFriendList = createAsyncThunk(
 
 export const getSuggestedFriends = createAsyncThunk(
   `${name}/getSuggestedFriends`,
-  async (_, thunkAPI) => {
+  async (token, thunkAPI) => {
     try {
       const res = await axios.get(`${domain}/api/friendship/suggest`, {
-        headers: { Authorization: thunkAPI.getState().user.token },
+        headers: { Authorization: token },
       });
       return { data: res.data, fetched: true };
     } catch (err) {
@@ -130,10 +132,10 @@ export const getSuggestedFriends = createAsyncThunk(
 
 export const getRequests = createAsyncThunk(
   `${name}/getRequests`,
-  async (_, thunkAPI) => {
+  async (token, thunkAPI) => {
     try {
       const res = await axios.get(`${domain}/api/friendship/request`, {
-        headers: { Authorization: thunkAPI.getState().user.token },
+        headers: { Authorization: token },
       });
       return { data: res.data, fetched: true };
     } catch (err) {
@@ -145,10 +147,10 @@ export const getRequests = createAsyncThunk(
 
 export const getSentRequests = createAsyncThunk(
   `${name}/getSentRequests`,
-  async (_, thunkAPI) => {
+  async (token, thunkAPI) => {
     try {
       const res = await axios.get(`${domain}/api/friendship/sentRequest`, {
-        headers: { Authorization: thunkAPI.getState().user.token },
+        headers: { Authorization: token },
       });
       return { data: res.data, fetched: true };
     } catch (err) {
@@ -186,30 +188,41 @@ export const friendsSlice = createSlice({
       state.requests.data = action.payload.data;
       state.requests.fetched = action.payload.fetched;
     },
-    [unfriend.fulfilled]: (state, action) => {
-      let [friendObj, type] = [
-        state.friends.data.find((friend) => friend.id === action.payload),
-        1,
-      ];
-      if (!friendObj)
-        [friendObj, type] = [
-          state.requests.data.find((friend) => friend.id === action.payload),
-          2,
-        ];
-
-      if (type === 1)
-        state.friends.data = state.friends.data.filter(
-          (friend) => friend.id !== friendObj.id
-        );
-
-      if (type === 2)
-        state.requests.data = state.requests.data.filter(
-          (friend) => friend.id !== friendObj.id
-        );
-
-      state.suggests.data.push(friendObj);
+    [acceptRequest.fulfilled]: (state, action) => {
+      const profile = action.payload;
+      const friendIndex = state.requests.data.findIndex(
+        (friend) => friend.id === profile.id
+      );
+      if (friendIndex !== -1) {
+        state.requests.data.splice(friendIndex, 1);
+      }
+      state.friends.data.push(action.payload);
     },
-    [makeRequest.fulfilled]: (state, action) => {},
+    [unfriend.fulfilled]: (state, action) => {
+      const profile = action.payload;
+      const friendIndex = state.friends.data.findIndex(
+        (friend) => friend.id === profile.id
+      );
+      if (friendIndex !== -1) {
+        state.friends.data.splice(friendIndex, 1);
+        return;
+      }
+      const sentIndex = state.sentRequests.data.findIndex(
+        (friend) => friend.id === profile.id
+      );
+      if (sentIndex !== -1) {
+        state.sentRequests.data.splice(friendIndex, 1);
+        return;
+      }
+    },
+    [makeRequest.fulfilled]: (state, action) => {
+      // thunkAPI.dispatch(getSentRequests());
+      state.sentRequests.data.push(action.payload);
+      const index = state.suggests.data.findIndex(
+        (suggest) => suggest.id === action.payload.id
+      );
+      if (index !== -1) state.suggests.data.splice(index, 1);
+    },
     [fetchFriendAvatar.fulfilled]: (state, action) => {
       if (action.payload) {
         const { friendId, avatarSrc, type } = action.payload;
@@ -218,7 +231,6 @@ export const friendsSlice = createSlice({
         switch (type) {
           case "friends":
             arrFriends = state.friends.data;
-            state.friends.fetchedFriendAvatar = true;
             break;
           case "suggests":
             arrFriends = state.suggests.data;

@@ -9,7 +9,6 @@ import { postsSlice } from "../posts/postsSlice";
 
 const initialState = {
   token: "",
-  dispatched: false,
   fetchedAvatar: false,
   isValidToken: false,
   data: {},
@@ -38,7 +37,6 @@ export const isValidToken = createAsyncThunk(
   "user/isValidToken",
   async (_, thunkAPI) => {
     try {
-      thunkAPI.dispatch(userSlice.actions.dispatched());
       // get token from previos login
       const uToken = localStorage.getItem(token);
 
@@ -100,12 +98,6 @@ export const uploadAvatar = createAsyncThunk(
           "Content-Type": "multipart/form-data",
         },
       });
-      await thunkAPI.dispatch(
-        fetchAvatar({
-          type: "user",
-          avatarId: thunkAPI.getState().user.data.avatar,
-        })
-      );
       return res.data;
     } catch (err) {
       return "";
@@ -181,9 +173,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    dispatched(state, action) {
-      state.dispatched = true;
-    },
+    
     logout(state, action) {
       return initialState;
     },

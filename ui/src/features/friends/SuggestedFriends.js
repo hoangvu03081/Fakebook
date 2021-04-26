@@ -14,39 +14,51 @@ export default function SuggestedFriends() {
   const suggests = useSelector((state) => state.friends.suggests);
   const requests = useSelector((state) => state.friends.requests);
   const token = useSelector((state) => state.user.token);
+
   useEffect(() => {
-    if (token) {
-      dispatch(getSuggestedFriends());
-      dispatch(getRequests());
+    if (token && !suggests.data.length && !requests.data.length) {
+      dispatch(getSuggestedFriends(token));
+      dispatch(getRequests(token));
     }
-  }, [token]);
-
-  useEffect(() => {
-    suggests.data.forEach((friend) => {
-      dispatch(
-        fetchFriendAvatar({
-          friendId: friend.id,
-          avatarId: friend.avatar,
-          type: "suggests",
-        })
-      );
-    });
-    requests.data.forEach((friend) => {
-      dispatch(
-        fetchFriendAvatar({
-          friendId: friend.id,
-          avatarId: friend.avatar,
-          type: "requests",
-        })
-      );
-    });
-  }, [suggests.data.length, requests.data.length]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(logout());
-    };
   }, []);
+
+  useEffect(() => {
+    if (
+      suggests.fetched &&
+      suggests.data[0] &&
+      suggests.data[0].avatar &&
+      !suggests.data[0].avatarSrc
+    ) {
+      suggests.data.forEach((friend) =>
+        dispatch(
+          fetchFriendAvatar({
+            friendId: friend.id,
+            avatarId: friend.avatar,
+            type: "suggests",
+          })
+        )
+      );
+    }
+  }, [suggests]);
+
+  useEffect(() => {
+    if (
+      requests.fetched &&
+      requests.data[0] &&
+      requests.data[0].avatar &&
+      !requests.data[0].avatarSrc
+    ) {
+      requests.data.forEach((friend) =>
+        dispatch(
+          fetchFriendAvatar({
+            friendId: friend.id,
+            avatarId: friend.avatar,
+            type: "requests",
+          })
+        )
+      );
+    }
+  }, [requests]);
 
   const renderRequests = () => {
     if (requests.fetched && requests.data.length) {

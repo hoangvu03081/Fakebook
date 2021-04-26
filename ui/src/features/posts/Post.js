@@ -3,11 +3,28 @@ import formatDistance from "date-fns/formatDistance";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Card, CardFooter } from "reactstrap";
-import { fetchPostImage, likePost, unlikePost } from "./postsSlice";
+import {
+  fetchPostImage,
+  getPostUserAvatar,
+  likePost,
+  unlikePost,
+} from "./postsSlice";
 
 export default function Post({ post }) {
   const dispatch = useDispatch();
   const [animationLike, setAnimationLike] = useState(false);
+
+  useEffect(() => {
+    if (post.userInfo && post.userInfo.avatar && !post.userInfo.avatarSrc) {
+      dispatch(getPostUserAvatar({ post }));
+    }
+  }, [post.userInfo]);
+
+  useEffect(() => {
+    if (post.imageId.length && post.userInfo && post.userInfo.avatarSrc)
+      dispatch(fetchPostImage({ postId: post.id, avatarId: post.imageId[0] }));
+  }, [post.imageId, post.userInfo]);
+
   const onToggleLike = () => {
     if (post.liked === false) {
       setAnimationLike(true);
@@ -17,11 +34,6 @@ export default function Post({ post }) {
       setAnimationLike(false);
     }
   };
-
-  useEffect(() => {
-    if (post.imageId[0])
-      dispatch(fetchPostImage({ postId: post.id, avatarId: post.imageId[0] }));
-  }, [post.imageId]);
 
   const { userInfo } = post;
   if (!userInfo) return null;

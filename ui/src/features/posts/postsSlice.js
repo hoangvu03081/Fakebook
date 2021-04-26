@@ -44,14 +44,15 @@ export const likePost = createAsyncThunk(
 
 export const addPost = createAsyncThunk(
   `${name}/addPost`,
-  async ({ ufile, content }, thunkAPI) => {
+  async ({ user, sendValues }, thunkAPI) => {
     try {
-      const dto = {
+      const { ufile, content } = sendValues;
+      let dto = {
         content,
-        id: 0,
+        id: thunkAPI.getState().posts.posts[0]?.id + 1,
         likes: 0,
         userId: thunkAPI.getState().user.data.id,
-        uploadTime: "2021-04-18T03:50:32.729Z",
+        uploadTime: getISOStringNow(),
       };
       const formData = new FormData();
       formData.append(
@@ -72,7 +73,18 @@ export const addPost = createAsyncThunk(
           },
         });
       }
-      thunkAPI.dispatch(getPost(getISOStringNow()));
+      let newUFile = "";
+      if (ufile) newUFile = URL.createObjectURL(ufile);
+
+      dto = {
+        ...dto,
+        liked: false,
+        imageId: [],
+        imgSrc: newUFile,
+        userInfo: user,
+      };
+
+      return dto;
     } catch (err) {
       console.log(err);
     }
@@ -81,25 +93,11 @@ export const addPost = createAsyncThunk(
 
 export const getPost = createAsyncThunk(
   `${name}/getPost`,
-  async (ISOString, thunkAPI) => {
+  async ({ ISOString, token }, thunkAPI) => {
     try {
-      const state = thunkAPI.getState();
-
       const res = await axios.get(`${domain}/api/post`, {
-        headers: { Authorization: state.user.token },
+        headers: { Authorization: token },
         params: { time: ISOString },
-      });
-
-      const friends = state.friends.friends;
-
-      res.data = res.data.map((post) => {
-        if (post.userId === state.user.data.id)
-          return { ...post, userInfo: state.user.data };
-        else
-          return {
-            ...post,
-            userInfo: friends.data.find((friend) => friend.id === post.userId),
-          };
       });
 
       return res.data;
@@ -132,6 +130,29 @@ export const getProfilePost = createAsyncThunk(
   }
 );
 
+export const getPostUserInfo = createAsyncThunk(
+  `${name}/getPostUserInfo`,
+  async (post, thunkAPI) => {
+    const user = thunkAPI.getState().user;
+    if (user.data.id === post.userId) {
+      return { post, data: user.data };
+    }
+    const res = await axios.get(`${domain}/api/user/${post.userId}`, {
+      headers: { Authorization: user.token },
+    });
+    return { post, data: res.data };
+  }
+);
+
+export const getPostUserAvatar = createAsyncThunk(
+  `${name}/getPostUserAvatar`,
+  async ({ post }, thunkAPI) => {
+    const { userInfo } = post;
+    const res = await avatarFetch(userInfo.avatar, thunkAPI);
+    return { post, avatarSrc: res };
+  }
+);
+
 export const fetchPostImage = createAsyncThunk(
   `${name}/fetchPostImage`,
   async ({ postId, avatarId }, thunkAPI) => {
@@ -152,6 +173,9 @@ export const postsSlice = createSlice({
     },
   },
   extraReducers: {
+    [addPost.fulfilled]: (state, action) => {
+      state.posts.unshift(action.payload);
+    },
     [likePost.fulfilled]: (state, action) => {
       if (action.payload) {
         const post = state.posts.find((post) => post.id === action.payload);
@@ -172,6 +196,19 @@ export const postsSlice = createSlice({
     },
     [getPost.fulfilled]: (state, action) => {
       state.posts = action.payload;
+    },
+    [getPostUserInfo.fulfilled]: (state, action) => {
+      const index = state.posts.findIndex(
+        (post) => post.id === action.payload.post.id
+      );
+      const newPost = { ...state.posts[index], userInfo: action.payload.data };
+      state.posts.splice(index, 1, newPost);
+    },
+    [getPostUserAvatar.fulfilled]: (state, action) => {
+      const { avatarSrc, post } = action.payload;
+      const newPost = { ...post, userInfo: { ...post.userInfo, avatarSrc } };
+      const index = state.posts.findIndex((p) => p.id === post.id);
+      state.posts.splice([index], 1, newPost);
     },
     [getProfilePost.fulfilled]: (state, action) => {
       state.posts = action.payload;

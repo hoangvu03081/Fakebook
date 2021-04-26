@@ -15,8 +15,8 @@ import {
 } from "reactstrap";
 import { useEffect } from "react";
 
-const AddPost = React.memo(() => {
-  const name = useSelector((state) => state.user.data.name);
+const AddPost = () => {
+  const user = useSelector((state) => state.user.data);
 
   const dispatch = useDispatch();
 
@@ -31,7 +31,7 @@ const AddPost = React.memo(() => {
     }),
     onSubmit: (values, formikBags) => {
       let sendValues = { ufile: file, content: values.content };
-      dispatch(addPost(sendValues));
+      dispatch(addPost({user, sendValues}));
       formikBags.resetForm();
       setFile(null);
     },
@@ -41,8 +41,6 @@ const AddPost = React.memo(() => {
   const handleFile = (e) => {
     setFile(e.target.files[0]);
   };
-
-  useEffect(() => handleChange({ target: { name: "content", value: "" } }), []);
 
   return (
     <Card className="p-4 add-post">
@@ -60,7 +58,7 @@ const AddPost = React.memo(() => {
             name="content"
             value={values.content}
             className="form-control post-input-content"
-            placeholder={`Hello ${name}, what are your feeling now?`}
+            placeholder={`Hello ${user.name}, what are your feeling now?`}
           ></Input>
         </FormGroup>
         <FormGroup>
@@ -84,7 +82,6 @@ const AddPost = React.memo(() => {
       </Form>
     </Card>
   );
-});
+};
 
-AddPost.displayName = "AddPost";
 export default AddPost;

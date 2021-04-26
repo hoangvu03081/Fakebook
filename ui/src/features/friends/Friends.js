@@ -26,13 +26,14 @@ export default function Friends() {
   const dispatch = useDispatch();
   const friends = useSelector((state) => state.friends.friends);
   const token = useSelector((state) => state.user.token);
-  useEffect(async () => {
+
+  useEffect(() => {
     if (token) {
-      dispatch(getFriendList());
+      dispatch(getFriendList(token));
     }
   }, [token]);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (friends.fetched) {
       friends.data.forEach((friend) => {
         dispatch(
