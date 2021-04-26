@@ -1,43 +1,22 @@
 import React from "react";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getISOStringNow } from "../../configs/normalizeFunc";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Post from "./Post";
-import { getPost, getProfilePost } from "./postsSlice";
+import { getPostUserInfo } from "./postsSlice";
 
-export const renderPosts = (posts) => {
-  return posts.map((post) => <Post post={post} key={post.id} />);
-};
-
-function Posts({ type, id }) {
+function Posts({ posts }) {
   const dispatch = useDispatch();
-  const posts = useSelector((state) => state.posts.posts);
-  const token = useSelector((state) => state.user.token);
-  const fetchedFriendAvatar = useSelector(
-    (state) => state.friends.friends.fetchedFriendAvatar
-  );
-  const fetchedAvatar = useSelector((state) => state.user.fetchedAvatar);
-  const friends = useSelector((state) => state.friends.friends.data);
-
   useEffect(() => {
-    if (
-      token &&
-      (id || type === "post" || friends.length === 0) &&
-      (fetchedFriendAvatar || friends.length === 0 || type === "profilePost") &&
-      fetchedAvatar
-    ) {
-      const ISOString = getISOStringNow();
-      switch (type) {
-        case "post":
-          dispatch(getPost(ISOString));
-          break;
-        case "profilePost":
-          dispatch(getProfilePost(id));
-          break;
-      }
-    }
-  }, [token, fetchedFriendAvatar, fetchedAvatar]);
+    if (posts.length) posts.forEach((post) => dispatch(getPostUserInfo(post)));
+  }, [posts.length]);
 
-  return <section className="posts">{renderPosts(posts)}</section>;
+  return (
+    <>
+      {posts.map((post) => (
+        <Post post={post} key={post.id} />
+      ))}
+    </>
+  );
 }
 export default Posts;

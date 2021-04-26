@@ -15,15 +15,15 @@ import { getProfilePost } from "./posts/postsSlice";
 import { clearProfile, fetchAvatar, getProfile } from "./user/userSlice";
 import Posts from "./posts/Posts";
 
-const Button = ({ type, content, id }) => {
+const Button = ({ type, content, profile }) => {
   const dispatch = useDispatch();
   if (type) type = type.toLowerCase();
   let onClick = null;
   switch (type) {
     case "accept":
-      onClick = () => dispatch(acceptRequest(id));
+      onClick = () => dispatch(acceptRequest(profile));
     case "addfriend":
-      if (!onClick) onClick = () => dispatch(makeRequest(id));
+      if (!onClick) onClick = () => dispatch(makeRequest(profile));
       return (
         <button className="btn s mx-2" onClick={onClick}>
           {content}
@@ -32,7 +32,7 @@ const Button = ({ type, content, id }) => {
     case "decline":
     case "unfriend":
     case "unsent":
-      onClick = () => dispatch(unfriend(id));
+      onClick = () => dispatch(unfriend(profile));
       return (
         <button className="btn d mx-2" onClick={onClick}>
           {content}
@@ -42,7 +42,7 @@ const Button = ({ type, content, id }) => {
       return null;
   }
 };
-const Profile = React.memo(function Profile(props) {
+const Profile = function Profile(props) {
   const dispatch = useDispatch();
   const { id } = props.match.params;
   const profile = useSelector((state) => state.user.profile);
@@ -51,26 +51,23 @@ const Profile = React.memo(function Profile(props) {
   const sentRequests = useSelector((state) => state.friends.sentRequests);
   const user = useSelector((state) => state.user.data);
   const token = useSelector((state) => state.user.token);
+  const posts = useSelector((state) => state.posts.posts);
+
   useEffect(() => {
     if (token) {
       dispatch(getProfile(id));
       dispatch(getProfilePost(id));
-      if (!friends.fetched) {
-        dispatch(getFriendList());
-      }
-      if (!sentRequests.fetched) {
-        dispatch(getSentRequests());
-      }
-      if (!requests.fetched) {
-        dispatch(getRequests());
-      }
+      dispatch(getFriendList(token));
+      dispatch(getSentRequests(token));
+      dispatch(getRequests(token));
     }
-  }, [token]);
+  }, [id, token]);
+
   useEffect(() => {
     if (profile.avatar) {
       dispatch(fetchAvatar({ type: "profile", avatarId: profile.avatar }));
     }
-  }, [profile.avatar]);
+  }, [id, profile.avatar]);
 
   useEffect(() => {
     return () => {
@@ -82,19 +79,23 @@ const Profile = React.memo(function Profile(props) {
     if (friends.fetched && requests.fetched && sentRequests.fetched) {
       if (user.id === profile.id) return <Button />;
       else if (friends.data.find((friend) => friend.id === profile.id))
-        return <Button type="unfriend" content="Unfriend" id={profile.id} />;
-      else if (requests.data.find((friend) => friend.id === profile.id))
+        return <Button type="unfriend" content="Unfriend" profile={profile} />;
+      else if (requests.data.find((friend) => friend.id === profile.id)) {
         return (
           <div className="d-flex" style={{ width: 400 }}>
-            <Button type="accept" content="Accept Request" id={profile.id} />
-            <Button type="decline" content="Decline Request" id={profile.id} />
+            <Button type="accept" content="Accept Request" profile={profile} />
+            <Button
+              type="decline"
+              content="Decline Request"
+              profile={profile}
+            />
           </div>
         );
-      else if (sentRequests.data.find((friend) => friend.id === profile.id))
+      } else if (sentRequests.data.find((friend) => friend.id === profile.id))
         return (
-          <Button type="unsent" content="Unsent Request" id={profile.id} />
+          <Button type="unsent" content="Unsent Request" profile={profile} />
         );
-      return <Button type="addFriend" content="Add Friend" id={profile.id} />;
+      return <Button type="addFriend" content="Add Friend" profile={profile} />;
     }
     return null;
   };
@@ -133,11 +134,11 @@ const Profile = React.memo(function Profile(props) {
       <Container fluid={true} className="posts my-md-4">
         <Row className="justify-content-center">
           <Col lg="6">
-            <Posts type="profilePost" id={profile.id} />
+            <Posts posts={posts} />
           </Col>
         </Row>
       </Container>
     </main>
   );
-});
+};
 export default Profile;

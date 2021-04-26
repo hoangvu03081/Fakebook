@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route } from "react-router";
 import Header from "../components/Header/Header";
@@ -8,12 +8,13 @@ import { isValidToken } from "../features/user/userSlice";
 export default function Home({ Component, ...props }) {
   const dispatch = useDispatch();
   const isValid = useSelector((state) => state.user.isValidToken);
-  const dispatched = useSelector((state) => state.user.dispatched);
 
   // check for first time users go to page or check for valid token login
   // if don't valid then dispatch a function to check for valid again
-  if (!isValid && !dispatched) {
+  useEffect(() => {
     dispatch(isValidToken());
+  }, []);
+  if (!isValid) {
     return <Loading />;
   }
   return (

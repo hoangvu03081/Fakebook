@@ -26,7 +26,7 @@ import {
   CustomInput,
 } from "reactstrap";
 
-const Header = React.forwardRef((props, ref) => {
+const Header = (props) => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.user.data);
 
@@ -40,8 +40,6 @@ const Header = React.forwardRef((props, ref) => {
     formData.append("file", file);
     // dispatch upload avatar action to send file to backend
     await dispatch(uploadAvatar(formData));
-    // fetch user data again to refresh image
-    dispatch(isValidToken());
     // close the modal
     setModal(false);
   };
@@ -56,7 +54,7 @@ const Header = React.forwardRef((props, ref) => {
   }, [userData.avatar]);
 
   return (
-    <Navbar color="light" light expand="md" className="main-navbar" ref={ref}>
+    <Navbar color="light" light expand="md" className="main-navbar">
       <Container fluid={true} className="px-4">
         <NavbarBrand tag="div">
           <Link to="/">fakebook</Link>
@@ -115,6 +113,6 @@ const Header = React.forwardRef((props, ref) => {
       </Container>
     </Navbar>
   );
-});
+};
 
 export default Header;
