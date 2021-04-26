@@ -6,7 +6,7 @@ import { getISOStringNow } from "../../configs/normalizeFunc";
 import avatarFetch from "../axiosActions/avatarAction";
 
 const name = "posts";
-const initialState = { posts: [] };
+const initialState = { posts: [], initCounter: 0 };
 
 export const unlikePost = createAsyncThunk(
   `${name}/unlikePost`,
@@ -52,7 +52,7 @@ export const addPost = createAsyncThunk(
         id: thunkAPI.getState().posts.posts[0]?.id + 1,
         likes: 0,
         userId: thunkAPI.getState().user.data.id,
-        uploadTime: getISOStringNow(),
+        uploadTime: new Date().toISOString(),
       };
       const formData = new FormData();
       formData.append(
@@ -198,6 +198,7 @@ export const postsSlice = createSlice({
       state.posts = action.payload;
     },
     [getPostUserInfo.fulfilled]: (state, action) => {
+      ++state.initCounter;
       const index = state.posts.findIndex(
         (post) => post.id === action.payload.post.id
       );
@@ -205,6 +206,7 @@ export const postsSlice = createSlice({
       state.posts.splice(index, 1, newPost);
     },
     [getPostUserAvatar.fulfilled]: (state, action) => {
+      ++state.initCounter;
       const { avatarSrc, post } = action.payload;
       const newPost = { ...post, userInfo: { ...post.userInfo, avatarSrc } };
       const index = state.posts.findIndex((p) => p.id === post.id);
@@ -214,6 +216,7 @@ export const postsSlice = createSlice({
       state.posts = action.payload;
     },
     [fetchPostImage.fulfilled]: (state, action) => {
+      ++state.initCounter;
       const { postId, imgSrc } = action.payload;
       const post = state.posts.find((post) => post.id === postId);
       if (post) post.imgSrc = imgSrc;

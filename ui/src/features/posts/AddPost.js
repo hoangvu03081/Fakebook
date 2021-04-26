@@ -17,7 +17,7 @@ import { useEffect } from "react";
 
 const AddPost = () => {
   const user = useSelector((state) => state.user.data);
-
+  const initialCounter = useSelector((state) => state.posts.posts.initCounter);
   const dispatch = useDispatch();
 
   const [file, setFile] = useState(null);
@@ -31,7 +31,7 @@ const AddPost = () => {
     }),
     onSubmit: (values, formikBags) => {
       let sendValues = { ufile: file, content: values.content };
-      dispatch(addPost({user, sendValues}));
+      dispatch(addPost({ user, sendValues }));
       formikBags.resetForm();
       setFile(null);
     },
@@ -73,7 +73,7 @@ const AddPost = () => {
           <Button
             color="primary"
             className="w-100"
-            disabled={Boolean(errors.content)}
+            disabled={initialCounter < 4 && Boolean(errors.content)}
             type="submit"
           >
             Upload
