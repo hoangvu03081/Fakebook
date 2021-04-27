@@ -15,6 +15,6 @@ A Facebook-cloning project built on Spring Boot and React.
   
 ## Screenshots
 
-![App Screenshot](https://github.com/hoangvu03081/Fakebook/misc/1.png)
+![App Screenshot](/misc/1.png?raw=true)
 
   
