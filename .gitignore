@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+
 ### STS ###
 .apt_generated
 .classpath
@@ -60,9 +61,6 @@ build/
 # Web P
 *.webp
 
-# Portable Network Graphics
-*.png
-
 # Animated Portable Network Graphics
 *.apng
 
@@ -72,10 +70,6 @@ build/
 # Tagged Image File Format
 *.tiff
 *.tif
-
-# Scalable Vector Graphics
-*.svg
-*.svgz
 
 # Portable Document Format
 *.pdf
@@ -94,5 +88,9 @@ build/
 *.3dm
 *.max
 
+*.png
+
 # Lucene Index:
 /User
+
+!1.png
