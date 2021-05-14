@@ -11,7 +11,7 @@ import {
   makeRequest,
   unfriend,
 } from "./friends/friendsSlice";
-import { getProfilePost } from "./posts/postsSlice";
+import { getProfilePost, logout } from "./posts/postsSlice";
 import { getProfile } from "./user/userSlice";
 import Posts from "./posts/Posts";
 
@@ -93,6 +93,10 @@ const Profile = function Profile(props) {
     if (!sentRequests.length) dispatch(getSentRequests());
     if (!requests.length) dispatch(getRequests());
   }, [id]);
+
+  useEffect(() => {
+    return () => dispatch(logout());
+  }, []);
 
   return (
     <main>

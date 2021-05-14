@@ -15,8 +15,7 @@ export default function MainFeed() {
   const posts = useSelector((state) => state.posts.posts);
 
   useEffect(() => {
-    const ISOString = getISOStringNow();
-    dispatch(getPost(ISOString));
+    dispatch(getPost());
     return () => {
       dispatch(logout());
     };

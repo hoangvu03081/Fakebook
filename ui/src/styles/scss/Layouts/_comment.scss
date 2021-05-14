@@ -1,0 +1,12 @@
+.stat {
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+.comment {
+  &.username,
+  &.content {
+    line-height: 1rem;
+  }
+}

@@ -10349,4 +10349,15 @@ a {
   background-color: #f8f9fa;
 }
 
+.stat {
+  cursor: pointer;
+}
+.stat:hover {
+  text-decoration: underline;
+}
+
+.comment.username, .comment.content {
+  line-height: 1rem;
+}
+
 /*# sourceMappingURL=style.css.map */
