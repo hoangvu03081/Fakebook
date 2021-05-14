@@ -16,12 +16,10 @@ import {
 import { useEffect } from "react";
 
 const AddPost = () => {
-  const user = useSelector((state) => state.user.data);
-  const initialCounter = useSelector((state) => state.posts.posts.initCounter);
   const dispatch = useDispatch();
 
+  const user = useSelector((state) => state.user.data);
   const [file, setFile] = useState(null);
-
   const formik = useFormik({
     initialValues: {
       content: "",
@@ -36,7 +34,19 @@ const AddPost = () => {
       setFile(null);
     },
   });
-  const { values, errors, handleChange, handleBlur, handleSubmit } = formik;
+
+  const {
+    values,
+    errors,
+    handleChange,
+    setFieldTouched,
+    handleBlur,
+    handleSubmit,
+  } = formik;
+
+  useEffect(() => {
+    setFieldTouched("content", true, true);
+  }, []);
 
   const handleFile = (e) => {
     setFile(e.target.files[0]);
@@ -73,7 +83,7 @@ const AddPost = () => {
           <Button
             color="primary"
             className="w-100"
-            disabled={initialCounter < 4 && Boolean(errors.content)}
+            disabled={Boolean(errors.content)}
             type="submit"
           >
             Upload

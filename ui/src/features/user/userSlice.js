@@ -2,61 +2,87 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { history } from "../..";
 import { MySwal } from "../../components/Swal/Swal";
-import { domain, token } from "../../configs/constants";
-import avatarFetch from "../axiosActions/avatarAction";
+import { domain } from "../../configs/constants";
+import { createHeaders } from "../../configs/createHeaders";
 import { friendsSlice } from "../friends/friendsSlice";
 import { postsSlice } from "../posts/postsSlice";
 
+// class UserData {
+//   constructor(id = 0, username = "", name = "", avatar = "", avatarSrc = "") {
+//     this.id = id;
+//     this.username = username;
+//     this.name = name;
+//     this.avatar = avatar;
+//     this.avatarSrc = avatarSrc;
+//   }
+// }
+// {
+//   id: 0,
+//   username: "",
+//   name: "",
+//   avatar: "",
+//   avatarSrc: "",
+// }
 const initialState = {
-  token: "",
-  fetchedAvatar: false,
-  isValidToken: false,
   data: {},
   profile: {},
 };
 
-export const getProfile = createAsyncThunk(
-  "user/getProfile",
-  async (id, thunkAPI) => {
-    try {
-      const { user } = thunkAPI.getState();
-      if (id === user.data.id) return user.data;
-
-      const res = await axios.get(`${domain}/api/user/${id}`, {
-        headers: { Authorization: user.token },
-      });
-      return res.data;
-    } catch (err) {
-      console.log(err);
-      return {};
-    }
-  }
-);
+// 403 là lỗi Forbidden
 
 export const isValidToken = createAsyncThunk(
   "user/isValidToken",
   async (_, thunkAPI) => {
     try {
-      // get token from previos login
-      const uToken = localStorage.getItem(token);
-
+      const headers = createHeaders();
       // check if token is valid
-      const res = await axios.get(`${domain}/api/user`, {
-        headers: { Authorization: uToken },
-      });
 
+      const { data } = await axios.get(`${domain}/api/user`, headers);
+
+      // fetch user avatar
+      let avatarSrc = "";
+      if (data.avatar) {
+        const res = await axios.get(`${domain}/api/image/${data.avatar}`, {
+          responseType: "blob",
+          ...headers,
+        });
+        avatarSrc = URL.createObjectURL(res.data);
+      }
       // if valid return data to state
-      return { data: res.data, token: uToken, isValidToken: true };
+      return { ...data, avatarSrc };
     } catch (err) {
       // else redirect user to login page
       history.push("/login");
       // and send invalid signal to state
+      console.log(err);
       return {
         data: {},
-        token: "Invalid Token",
-        isValidToken: false,
-        load: false,
       };
+    }
+  }
+);
+
+export const getProfile = createAsyncThunk(
+  "user/getProfile",
+  async (id, thunkAPI) => {
+    try {
+      const user = thunkAPI.getState().user;
+      if (id === user.data.id) return user.data;
+
+      const headers = createHeaders();
+      const { data } = await axios.get(`${domain}/api/user/${id}`, headers);
+
+      let avatarSrc = "";
+      if (data.avatar) {
+        const res = await axios.get(`${domain}/api/image/${data.avatar}`, {
+          responseType: "blob",
+          ...headers,
+        });
+        avatarSrc = URL.createObjectURL(res.data);
+      }
+      return { ...data, avatarSrc };
+    } catch (err) {
+      return {};
     }
   }
 );
@@ -71,9 +97,6 @@ export const login = createAsyncThunk("user/login", async (loginDto) => {
 
     // push to homepage
     history.push("/");
-
-    // and save the token to redux store
-    return response.data;
   } catch (err) {
     localStorage.removeItem("token");
 
@@ -82,8 +105,6 @@ export const login = createAsyncThunk("user/login", async (loginDto) => {
       title: "Wrong account",
       text: "Plese check your username and password again!",
     }).then((res) => history.go());
-
-    return "";
   }
 });
 
@@ -92,25 +113,20 @@ export const uploadAvatar = createAsyncThunk(
   async (formData, thunkAPI) => {
     try {
       const file = formData;
-      const res = await axios.post(`${domain}/api/image/avatar/upload`, file, {
-        headers: {
-          Authorization: thunkAPI.getState().user.token,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.post(
+        `${domain}/api/image/avatar/upload`,
+        file,
+        createHeaders()
+        // {
+        //   headers: {
+        //     "Content-Type": "multipart/form-data",
+        //   },
+        // }
+      );
       return res.data;
     } catch (err) {
       return "";
     }
-  }
-);
-
-export const fetchAvatar = createAsyncThunk(
-  "user/avatar",
-  async ({ type, avatarId }, thunkAPI) => {
-    const avatarSrc = await avatarFetch(avatarId, thunkAPI);
-    if (avatarId) return { type, avatarSrc };
-    return { type, avatarSrc: "" };
   }
 );
 
@@ -133,9 +149,7 @@ export const register = async (values) => {
     };
 
     // try to register
-    await axios.post(`${domain}/api/auth/register`, userDto, {
-      headers: { "Content-Type": "application/json" },
-    });
+    await axios.post(`${domain}/api/auth/register`, userDto);
     // if success alert
     const res = await MySwal.fire({
       title: "Register succeed!",
@@ -173,7 +187,6 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    
     logout(state, action) {
       return initialState;
     },
@@ -182,29 +195,11 @@ const userSlice = createSlice({
     },
   },
   extraReducers: {
-    [login.fulfilled]: (state, action) => {
-      state.token = action.payload;
-    },
     [isValidToken.fulfilled]: (state, action) => {
-      const { data, token, isValidToken } = action.payload;
-      state.data = data;
-      state.token = token;
-      state.isValidToken = isValidToken;
+      state.data = action.payload;
     },
     [uploadAvatar.fulfilled]: (state, action) => {
       state.data.avatar = action.payload;
-    },
-    [fetchAvatar.fulfilled]: (state, action) => {
-      const { type, avatarSrc } = action.payload;
-      switch (type) {
-        case "user":
-          state.data.avatarSrc = avatarSrc;
-          state.fetchedAvatar = true;
-          break;
-        case "profile":
-          state.profile.avatarSrc = avatarSrc;
-          break;
-      }
     },
     [getProfile.fulfilled]: (state, action) => {
       state.profile = action.payload;

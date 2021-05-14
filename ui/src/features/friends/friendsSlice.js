@@ -1,13 +1,13 @@
-import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { domain } from "../../configs/constants";
-import avatarFetch from "../axiosActions/avatarAction";
+import { createHeaders } from "../../configs/createHeaders";
 
 const initialState = {
-  friends: { data: [], fetched: false, fetchedFriendAvatar: false },
-  suggests: { data: [], fetched: false },
-  sentRequests: { data: [], fetched: false },
-  requests: { data: [], fetched: false },
+  friends: [],
+  suggests: [],
+  sentRequests: [],
+  requests: [],
   search: [],
 };
 
@@ -18,10 +18,10 @@ export const friendSearch = createAsyncThunk(
   async (query, thunkAPI) => {
     try {
       const res = await axios.get(`${domain}/api/search`, {
-        headers: { Authorization: thunkAPI.getState().user.token },
+        ...createHeaders(),
         params: { query },
       });
-      console.log(res.data);
+
       return res.data;
     } catch (err) {
       console.log(err);
@@ -34,14 +34,10 @@ export const unfriend = createAsyncThunk(
   `${name}/unfriend`,
   async (profile, thunkAPI) => {
     try {
-      const res = await axios.delete(
+      await axios.delete(
         `${domain}/api/friendship/delete/${profile.id}`,
-        {
-          headers: { Authorization: thunkAPI.getState().user.token },
-        }
+        createHeaders()
       );
-      // thunkAPI.dispatch(getRequests());
-      // thunkAPI.dispatch(getSentRequests());
       return profile;
     } catch (err) {
       console.log(err);
@@ -56,7 +52,7 @@ export const acceptRequest = createAsyncThunk(
       await axios.put(
         `${domain}/api/friendship/accept/${profile.id}`,
         {},
-        { headers: { Authorization: thunkAPI.getState().user.token } }
+        createHeaders()
       );
       return profile;
     } catch (err) {
@@ -69,10 +65,10 @@ export const makeRequest = createAsyncThunk(
   `${name}/makeRequest`,
   async (profile, thunkAPI) => {
     try {
-      const res = await axios.post(
+      await axios.post(
         `${domain}/api/friendship/request/${profile.id}`,
         {},
-        { headers: { Authorization: thunkAPI.getState().user.token } }
+        createHeaders()
       );
 
       return profile;
@@ -82,32 +78,29 @@ export const makeRequest = createAsyncThunk(
   }
 );
 
-// fetchFriendAvatar
-export const fetchFriendAvatar = createAsyncThunk(
-  `${name}/getFriendAvatar`,
-  async ({ friendId, avatarId, type }, thunkAPI) => {
-    if (avatarId) {
-      try {
-        const avatarSrc = await avatarFetch(avatarId, thunkAPI);
-        return { friendId, avatarSrc, type };
-      } catch (err) {
-        console.log(err);
-        return false;
-      }
-    }
-    return { friendId, avatarSrc: "", type };
-  }
-);
-
 export const getFriendList = createAsyncThunk(
   `${name}/getFriendList`,
-  async (token, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const res = await axios.get(`${domain}/api/friendship`, {
-        headers: { Authorization: token },
-      });
+      const headers = createHeaders();
+      // getFriendList
+      let { data: friendList } = await axios.get(
+        `${domain}/api/friendship`,
+        headers
+      );
 
-      return { data: res.data, fetched: true };
+      friendList = await Promise.all(
+        friendList.map(async (friend) => {
+          const res = await axios.get(`${domain}/api/image/${friend.avatar}`, {
+            responseType: "blob",
+            ...headers,
+          });
+          const avatarSrc = URL.createObjectURL(res.data);
+          return { ...friend, avatarSrc };
+        })
+      );
+
+      return friendList;
     } catch (err) {
       console.log(err);
       return { data: [], fetched: false };
@@ -117,12 +110,33 @@ export const getFriendList = createAsyncThunk(
 
 export const getSuggestedFriends = createAsyncThunk(
   `${name}/getSuggestedFriends`,
-  async (token, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const res = await axios.get(`${domain}/api/friendship/suggest`, {
-        headers: { Authorization: token },
-      });
-      return { data: res.data, fetched: true };
+      const headers = createHeaders();
+      // getFriendList
+      let { data: friendList } = await axios.get(
+        `${domain}/api/friendship/suggest`,
+        headers
+      );
+
+      friendList = await Promise.all(
+        friendList.map(async (friend) => {
+          let avatarSrc = "";
+          if (friend.avatar) {
+            const res = await axios.get(
+              `${domain}/api/image/${friend.avatar}`,
+              {
+                responseType: "blob",
+                ...headers,
+              }
+            );
+            avatarSrc = URL.createObjectURL(res.data);
+          }
+          return { ...friend, avatarSrc };
+        })
+      );
+
+      return friendList;
     } catch (err) {
       console.log(err);
       return { data: [], fetched: false };
@@ -132,12 +146,33 @@ export const getSuggestedFriends = createAsyncThunk(
 
 export const getRequests = createAsyncThunk(
   `${name}/getRequests`,
-  async (token, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const res = await axios.get(`${domain}/api/friendship/request`, {
-        headers: { Authorization: token },
-      });
-      return { data: res.data, fetched: true };
+      const headers = createHeaders();
+      // getFriendList
+      let { data: friendList } = await axios.get(
+        `${domain}/api/friendship/request`,
+        headers
+      );
+
+      friendList = await Promise.all(
+        friendList.map(async (friend) => {
+          let avatarSrc = "";
+          if (friend.avatar) {
+            const res = await axios.get(
+              `${domain}/api/image/${friend.avatar}`,
+              {
+                responseType: "blob",
+                ...headers,
+              }
+            );
+            avatarSrc = URL.createObjectURL(res.data);
+          }
+          return {...friend, avatarSrc};
+        })
+      );
+
+      return friendList;
     } catch (err) {
       console.log(err);
       return { data: [], fetched: false };
@@ -147,12 +182,33 @@ export const getRequests = createAsyncThunk(
 
 export const getSentRequests = createAsyncThunk(
   `${name}/getSentRequests`,
-  async (token, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const res = await axios.get(`${domain}/api/friendship/sentRequest`, {
-        headers: { Authorization: token },
-      });
-      return { data: res.data, fetched: true };
+      const headers = createHeaders();
+      // getFriendList
+      let { data: friendList } = await axios.get(
+        `${domain}/api/friendship/sentRequest`,
+        headers
+      );
+
+      friendList = await Promise.all(
+        friendList.map(async (friend) => {
+          let avatarSrc = "";
+          if (friend.avatar) {
+            const res = await axios.get(
+              `${domain}/api/image/${friend.avatar}`,
+              {
+                responseType: "blob",
+                ...headers,
+              }
+            );
+            avatarSrc = URL.createObjectURL(res.data);
+          }
+          return { ...friend, avatarSrc };
+        })
+      );
+
+      return friendList;
     } catch (err) {
       console.log(err);
       return { data: [], fetched: false };
@@ -173,75 +229,47 @@ export const friendsSlice = createSlice({
       state.search = action.payload;
     },
     [getFriendList.fulfilled]: (state, action) => {
-      state.friends.data = action.payload.data;
-      state.friends.fetched = action.payload.fetched;
+      state.friends = action.payload;
     },
     [getSuggestedFriends.fulfilled]: (state, action) => {
-      state.suggests.data = action.payload.data;
-      state.suggests.fetched = action.payload.fetched;
+      state.suggests = action.payload;
     },
     [getSentRequests.fulfilled]: (state, action) => {
-      state.sentRequests.data = action.payload.data;
-      state.sentRequests.fetched = action.payload.fetched;
+      state.sentRequests = action.payload;
     },
     [getRequests.fulfilled]: (state, action) => {
-      state.requests.data = action.payload.data;
-      state.requests.fetched = action.payload.fetched;
+      state.requests = action.payload;
     },
     [acceptRequest.fulfilled]: (state, action) => {
       const profile = action.payload;
-      const friendIndex = state.requests.data.findIndex(
+      const friendIndex = state.requests.findIndex(
         (friend) => friend.id === profile.id
       );
-      if (friendIndex !== -1) {
-        state.requests.data.splice(friendIndex, 1);
-      }
-      state.friends.data.push(action.payload);
+      state.requests.splice(friendIndex, 1);
+      state.friends.push(action.payload);
     },
     [unfriend.fulfilled]: (state, action) => {
       const profile = action.payload;
-      const friendIndex = state.friends.data.findIndex(
+      const friendIndex = state.friends.findIndex(
         (friend) => friend.id === profile.id
       );
       if (friendIndex !== -1) {
-        state.friends.data.splice(friendIndex, 1);
+        state.friends.splice(friendIndex, 1);
         return;
       }
-      const sentIndex = state.sentRequests.data.findIndex(
+      const sentIndex = state.sentRequests.findIndex(
         (friend) => friend.id === profile.id
       );
       if (sentIndex !== -1) {
-        state.sentRequests.data.splice(friendIndex, 1);
+        state.sentRequests.splice(friendIndex, 1);
         return;
       }
     },
     [makeRequest.fulfilled]: (state, action) => {
-      // thunkAPI.dispatch(getSentRequests());
-      state.sentRequests.data.push(action.payload);
-      const index = state.suggests.data.findIndex(
-        (suggest) => suggest.id === action.payload.id
+      state.sentRequests.push(action.payload);
+      state.suggests = state.suggests.filter(
+        (suggest) => suggest.id !== action.payload.id
       );
-      if (index !== -1) state.suggests.data.splice(index, 1);
-    },
-    [fetchFriendAvatar.fulfilled]: (state, action) => {
-      if (action.payload) {
-        const { friendId, avatarSrc, type } = action.payload;
-        let arrFriends = [];
-
-        switch (type) {
-          case "friends":
-            arrFriends = state.friends.data;
-            break;
-          case "suggests":
-            arrFriends = state.suggests.data;
-            break;
-          case "requests":
-            arrFriends = state.requests.data;
-            break;
-        }
-        const friend = arrFriends.find((friend) => friend.id === friendId);
-        if (friend) friend.avatarSrc = avatarSrc;
-      }
     },
   },
 });

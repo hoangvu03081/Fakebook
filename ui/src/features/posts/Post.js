@@ -1,29 +1,13 @@
-import Icon, { UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import formatDistance from "date-fns/formatDistance";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Card, CardFooter } from "reactstrap";
-import {
-  fetchPostImage,
-  getPostUserAvatar,
-  likePost,
-  unlikePost,
-} from "./postsSlice";
+import { likePost, unlikePost } from "./postsSlice";
 
 export default function Post({ post }) {
   const dispatch = useDispatch();
   const [animationLike, setAnimationLike] = useState(false);
-
-  useEffect(() => {
-    if (post.userInfo && post.userInfo.avatar && !post.userInfo.avatarSrc) {
-      dispatch(getPostUserAvatar({ post }));
-    }
-  }, [post.userInfo]);
-
-  useEffect(() => {
-    if (post.imageId.length && post.userInfo && post.userInfo.avatarSrc)
-      dispatch(fetchPostImage({ postId: post.id, avatarId: post.imageId[0] }));
-  }, [post.imageId, post.userInfo]);
 
   const onToggleLike = () => {
     if (post.liked === false) {
@@ -34,9 +18,7 @@ export default function Post({ post }) {
       setAnimationLike(false);
     }
   };
-
-  const { userInfo } = post;
-  if (!userInfo) return null;
+  const userInfo = post.userInfo;
   return (
     <Card key={post.id} className="my-3">
       <div className="py-2 px-3">

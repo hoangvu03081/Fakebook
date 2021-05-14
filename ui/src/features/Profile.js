@@ -1,8 +1,8 @@
 import React from "react";
 import { useEffect } from "react";
-import Icon, { UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { Card, CardFooter, Col, Container, Jumbotron, Row } from "reactstrap";
+import { Col, Container, Jumbotron, Row } from "reactstrap";
 import {
   acceptRequest,
   getFriendList,
@@ -12,93 +12,87 @@ import {
   unfriend,
 } from "./friends/friendsSlice";
 import { getProfilePost } from "./posts/postsSlice";
-import { clearProfile, fetchAvatar, getProfile } from "./user/userSlice";
+import { getProfile } from "./user/userSlice";
 import Posts from "./posts/Posts";
 
-const Button = ({ type, content, profile }) => {
-  const dispatch = useDispatch();
-  if (type) type = type.toLowerCase();
-  let onClick = null;
-  switch (type) {
-    case "accept":
-      onClick = () => dispatch(acceptRequest(profile));
-    case "addfriend":
-      if (!onClick) onClick = () => dispatch(makeRequest(profile));
-      return (
-        <button className="btn s mx-2" onClick={onClick}>
-          {content}
-        </button>
-      );
-    case "decline":
-    case "unfriend":
-    case "unsent":
-      onClick = () => dispatch(unfriend(profile));
-      return (
-        <button className="btn d mx-2" onClick={onClick}>
-          {content}
-        </button>
-      );
-    default:
-      return null;
-  }
+const Button = ({ content, onClick, type }) => {
+  return (
+    <button className={`btn mx-2 ${type}`} onClick={onClick}>
+      {content}
+    </button>
+  );
 };
+
+const AdaptiveButton = ({ friends, requests, sentRequests, profile, user }) => {
+  const dispatch = useDispatch();
+  const isFriend = friends.find((friend) => friend.id === profile.id);
+  if (isFriend)
+    return (
+      <Button
+        type="d"
+        content="Unfriend"
+        onClick={() => dispatch(unfriend(profile))}
+      />
+    );
+
+  const isRequest = requests.find((friend) => friend.id === profile.id);
+  if (isRequest)
+    return (
+      <div className="d-flex" style={{ width: 400 }}>
+        <Button
+          content="Accept"
+          onClick={() => dispatch(acceptRequest(profile))}
+          type="s"
+        />
+        <Button
+          type="d"
+          content="Decline"
+          onClick={() => dispatch(unfriend(profile))}
+        />
+      </div>
+    );
+
+  const isSentRequest = sentRequests.find((friend) => friend.id === profile.id);
+  if (isSentRequest)
+    return (
+      <Button
+        type="d"
+        content="Unsend"
+        onClick={() => dispatch(unfriend(profile))}
+      />
+    );
+
+  if (user.id === profile.id) return null;
+
+  return (
+    <Button
+      type="s"
+      content="Add friend"
+      onClick={() => dispatch(makeRequest(profile))}
+    />
+  );
+};
+
 const Profile = function Profile(props) {
   const dispatch = useDispatch();
-  const { id } = props.match.params;
+  const id = props.match.params.id;
   const profile = useSelector((state) => state.user.profile);
+  const user = useSelector((state) => state.user.data);
   const friends = useSelector((state) => state.friends.friends);
   const requests = useSelector((state) => state.friends.requests);
   const sentRequests = useSelector((state) => state.friends.sentRequests);
-  const user = useSelector((state) => state.user.data);
-  const token = useSelector((state) => state.user.token);
   const posts = useSelector((state) => state.posts.posts);
 
   useEffect(() => {
-    if (token) {
-      dispatch(getProfile(id));
-      dispatch(getProfilePost(id));
-      dispatch(getFriendList(token));
-      dispatch(getSentRequests(token));
-      dispatch(getRequests(token));
-    }
-  }, [id, token]);
+    if (profile.id) dispatch(getProfilePost(profile));
+  }, [dispatch, profile]);
 
   useEffect(() => {
-    if (profile.avatar) {
-      dispatch(fetchAvatar({ type: "profile", avatarId: profile.avatar }));
-    }
-  }, [id, profile.avatar]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(clearProfile());
-    };
-  }, []);
-
-  const renderedBtn = () => {
-    if (friends.fetched && requests.fetched && sentRequests.fetched) {
-      if (user.id === profile.id) return <Button />;
-      else if (friends.data.find((friend) => friend.id === profile.id))
-        return <Button type="unfriend" content="Unfriend" profile={profile} />;
-      else if (requests.data.find((friend) => friend.id === profile.id)) {
-        return (
-          <div className="d-flex" style={{ width: 400 }}>
-            <Button type="accept" content="Accept Request" profile={profile} />
-            <Button
-              type="decline"
-              content="Decline Request"
-              profile={profile}
-            />
-          </div>
-        );
-      } else if (sentRequests.data.find((friend) => friend.id === profile.id))
-        return (
-          <Button type="unsent" content="Unsent Request" profile={profile} />
-        );
-      return <Button type="addFriend" content="Add Friend" profile={profile} />;
-    }
-    return null;
-  };
+    dispatch(getProfile(id));
+    if (!friends.length) dispatch(getFriendList());
+    if (!sentRequests.length) dispatch(getSentRequests());
+    if (!requests.length) dispatch(getRequests());
+  }, [id]);
 
   return (
     <main>
@@ -115,6 +109,7 @@ const Profile = function Profile(props) {
                   borderRadius: "50%",
                   objectFit: "cover",
                 }}
+                alt={profile.name}
               />
             ) : (
               <UserOutlined
@@ -127,7 +122,13 @@ const Profile = function Profile(props) {
           <h1 className="mt-2">{profile.name}</h1>
           <div>
             {/* render the correct button */}
-            {renderedBtn()}
+            <AdaptiveButton
+              friends={friends}
+              requests={requests}
+              sentRequests={sentRequests}
+              profile={profile}
+              user={user}
+            />
           </div>
         </div>
       </Jumbotron>

@@ -1,26 +1,26 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Friends from "../friends/Friends";
 import AddPost from "./AddPost";
 import { Col, Container, Row } from "reactstrap";
-import SuggestedFriends from "../friends/SuggestedFriends";
 import { getISOStringNow } from "../../configs/normalizeFunc";
 import Posts from "./Posts";
 import { Link } from "react-router-dom";
-import Icon, { UsergroupAddOutlined } from "@ant-design/icons";
-import { getPost } from "./postsSlice";
+import { UsergroupAddOutlined } from "@ant-design/icons";
+import { getPost, logout } from "./postsSlice";
 
 export default function MainFeed() {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.user.token);
+
   const posts = useSelector((state) => state.posts.posts);
 
   useEffect(() => {
-    if (token) {
-      const ISOString = getISOStringNow();
-      dispatch(getPost({ ISOString, token }));
-    }
-  }, [token]);
+    const ISOString = getISOStringNow();
+    dispatch(getPost(ISOString));
+    return () => {
+      dispatch(logout());
+    };
+  }, []);
 
   return (
     <Container fluid={true} className="posts my-4">

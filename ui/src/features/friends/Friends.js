@@ -1,9 +1,9 @@
 import React from "react";
 import { useEffect } from "react";
-import Icon, { UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchFriendAvatar, getFriendList } from "./friendsSlice";
+import { getFriendList } from "./friendsSlice";
 
 export const renderFriends = (friends) => {
   return friends.map((friend) => (
@@ -25,32 +25,15 @@ export const renderFriends = (friends) => {
 export default function Friends() {
   const dispatch = useDispatch();
   const friends = useSelector((state) => state.friends.friends);
-  const token = useSelector((state) => state.user.token);
 
   useEffect(() => {
-    if (token) {
-      dispatch(getFriendList(token));
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (friends.fetched) {
-      friends.data.forEach((friend) => {
-        dispatch(
-          fetchFriendAvatar({
-            friendId: friend.id,
-            avatarId: friend.avatar,
-            type: "friends",
-          })
-        );
-      });
-    }
-  }, [friends.fetched]);
+    dispatch(getFriendList());
+  }, []);
 
   return (
     <section className="contacts p-4 bg-light rounded w-100 mb-3">
       <h4>Contacts</h4>
-      {renderFriends(friends.data)}
+      {renderFriends(friends)}
     </section>
   );
 }
