@@ -1,7 +1,7 @@
 import { UserOutlined } from "@ant-design/icons";
 import formatDistance from "date-fns/formatDistance";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Card, CardFooter } from "reactstrap";
 import Comment from "./Comment";
 import { likePost, unlikePost } from "./postsSlice";
@@ -9,6 +9,7 @@ import { likePost, unlikePost } from "./postsSlice";
 export default function Post({ post }) {
   const dispatch = useDispatch();
   const [animationLike, setAnimationLike] = useState(false);
+  const userId = useSelector((state) => state.user.data.id);
 
   const onToggleLike = () => {
     if (post.liked === false) {
@@ -88,7 +89,7 @@ export default function Post({ post }) {
         comments={post.comments}
         show={showComment}
         postId={post.id}
-        userId={userInfo.id}
+        userId={userId}
         setShowComment={setShowComment}
       />
     </Card>

@@ -60,12 +60,8 @@ export default function Comment({ comments, show, postId, userId }) {
   const renderRelevant = () => {
     if (comments.find((comment) => comment.userId === userId)) {
       return comments.reduce((acc, comment) => {
-        if (
-          comment.userInfo &&
-          comment.userInfo.id === userId &&
-          acc.length < 2
-        ) {
-          acc.push(
+        if (comment.userInfo && acc.length < 2 && comment.userId === userId) {
+          acc.unshift(
             <div key={comment.id} className="d-flex">
               {comment.userInfo.avatarSrc ? (
                 <img
@@ -83,10 +79,10 @@ export default function Comment({ comments, show, postId, userId }) {
         }
         return acc;
       }, []);
-    } else if (comment.userInfo) {
+    } else {
       return comments.reduce((acc, comment) => {
-        if (comment.userInfo) {
-          acc.push(
+        if (comment.userInfo && acc.length < 2) {
+          acc.unshift(
             <div key={comment.id} className="d-flex">
               {comment.userInfo.avatarSrc ? (
                 <img

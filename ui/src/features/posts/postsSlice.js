@@ -309,7 +309,7 @@ export const postsSlice = createSlice({
       const post = state.posts.find(
         (post) => post.id === action.payload.postId
       );
-      post.comments.push(action.payload);
+      post.comments.unshift(action.payload);
     },
     [likePost.fulfilled]: (state, action) => {
       if (action.payload) {
