@@ -37,7 +37,9 @@ public class PostServiceImpl implements PostService {
         long id = userRepository.findIdByUsername(username);
         if(postDto.getUserId()!=id)
             throw new IllegalAccessException("User Id posted does not match token id");
+        postDto.setId(0);
         postDto.setUploadTime(LocalDateTime.now());
+        postDto.setLikes(0);
         Post post = new Post(postDto);
         return postRepository.save(post).getId();
     }
