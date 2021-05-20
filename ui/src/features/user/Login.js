@@ -1,4 +1,4 @@
-import { FormikProvider, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as yup from "yup";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from "reactstrap";
 import { Link } from "react-router-dom";
-import Icon, { YoutubeOutlined } from "@ant-design/icons";
+import { YoutubeOutlined } from "@ant-design/icons";
 import { Group } from "grommet-icons";
 
 export const transformInitialVals = (initialValues) => {

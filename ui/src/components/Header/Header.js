@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Icon, { UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  fetchAvatar,
-  isValidToken,
-  logout,
-  uploadAvatar,
-} from "../../features/user/userSlice";
+import { logout, uploadAvatar } from "../../features/user/userSlice";
 import {
   Container,
   Collapse,
@@ -26,7 +21,7 @@ import {
   CustomInput,
 } from "reactstrap";
 
-const Header = (props) => {
+const Header = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.user.data);
 
@@ -34,12 +29,12 @@ const Header = (props) => {
   const [file, setFile] = useState(null);
   const [modal, setModal] = useState(false);
 
-  const onSave = async () => {
+  const onSave = () => {
     // create form data to submit a file
     const formData = new FormData();
     formData.append("file", file);
     // dispatch upload avatar action to send file to backend
-    await dispatch(uploadAvatar(formData));
+    dispatch(uploadAvatar(formData));
     // close the modal
     setModal(false);
   };
@@ -47,11 +42,6 @@ const Header = (props) => {
   const handleLogout = () => {
     dispatch(logout());
   };
-
-  useEffect(() => {
-    if (userData.avatar)
-      dispatch(fetchAvatar({ type: "user", avatarId: userData.avatar }));
-  }, [userData.avatar]);
 
   return (
     <Navbar color="light" light expand="md" className="main-navbar">
@@ -66,7 +56,11 @@ const Header = (props) => {
               <DropdownToggle nav>
                 <div className="d-flex align-items-center justify-content-center">
                   {userData.avatarSrc ? (
-                    <img className="user-icon" src={userData.avatarSrc} />
+                    <img
+                      className="user-icon"
+                      src={userData.avatarSrc}
+                      alt={userData.name}
+                    />
                   ) : (
                     <UserOutlined className="user-icon" />
                   )}

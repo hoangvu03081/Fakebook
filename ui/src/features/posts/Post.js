@@ -1,29 +1,15 @@
-import Icon, { UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import formatDistance from "date-fns/formatDistance";
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Card, CardFooter } from "reactstrap";
-import {
-  fetchPostImage,
-  getPostUserAvatar,
-  likePost,
-  unlikePost,
-} from "./postsSlice";
+import Comment from "./Comment";
+import { likePost, unlikePost } from "./postsSlice";
 
 export default function Post({ post }) {
   const dispatch = useDispatch();
   const [animationLike, setAnimationLike] = useState(false);
-
-  useEffect(() => {
-    if (post.userInfo && post.userInfo.avatar && !post.userInfo.avatarSrc) {
-      dispatch(getPostUserAvatar({ post }));
-    }
-  }, [post.userInfo]);
-
-  useEffect(() => {
-    if (post.imageId.length && post.userInfo && post.userInfo.avatarSrc)
-      dispatch(fetchPostImage({ postId: post.id, avatarId: post.imageId[0] }));
-  }, [post.imageId, post.userInfo]);
+  const userId = useSelector((state) => state.user.data.id);
 
   const onToggleLike = () => {
     if (post.liked === false) {
@@ -35,8 +21,9 @@ export default function Post({ post }) {
     }
   };
 
-  const { userInfo } = post;
-  if (!userInfo) return null;
+  const [showComment, setShowComment] = useState(true);
+
+  const userInfo = post.userInfo;
   return (
     <Card key={post.id} className="my-3">
       <div className="py-2 px-3">
@@ -69,6 +56,15 @@ export default function Post({ post }) {
           style={{ objectFit: "cover" }}
         />
       ) : null}
+      <div className="d-flex justify-content-end">
+        <span className="text-secondary stat mr-2">{post.likes} likes</span>
+        <span
+          className="text-secondary stat mr-4"
+          onClick={() => setShowComment(!showComment)}
+        >
+          {post.comments?.length ? post.comments?.length : 0} comments
+        </span>
+      </div>
       <CardFooter className="py-2 px-3">
         <div className="d-flex">
           <div
@@ -81,16 +77,21 @@ export default function Post({ post }) {
                 type={post.liked ? "solid" : "regular"}
               ></box-icon>
             </div>
-            <span>{post.likes}</span>
           </div>
           <div className="comment-box">
             <div className="mt-1 mr-1">
               <box-icon name="comment"></box-icon>
             </div>
-            <span>123</span>
           </div>
         </div>
       </CardFooter>
+      <Comment
+        comments={post.comments}
+        show={showComment}
+        postId={post.id}
+        userId={userId}
+        setShowComment={setShowComment}
+      />
     </Card>
   );
 }

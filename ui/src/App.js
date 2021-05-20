@@ -13,11 +13,11 @@ function App() {
   return (
     <>
       <Switch>
-        <HomeTemplate Component={MainFeed} exact path="/" />
         <ThreeSecs Component={SuggestedFriends} path="/requests" />
         <HomeTemplate Component={Profile} path="/profile/:id" />
         <RegisterTemplate Component={Register} path="/register"/>
         <RegisterTemplate Component={Login} path="/login"/>
+        <HomeTemplate Component={MainFeed} exact path="/" />
       </Switch>
     </>
   );

@@ -1,46 +1,27 @@
-import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  current,
+  nanoid,
+} from "@reduxjs/toolkit";
 import axios from "axios";
-import { post } from "jquery";
 import { domain } from "../../configs/constants";
+import { createHeaders } from "../../configs/createHeaders";
 import { getISOStringNow } from "../../configs/normalizeFunc";
-import avatarFetch from "../axiosActions/avatarAction";
 
+// class Post {
+//   constructor(
+//     id = 0,
+//     content = "",
+//     likes = 0,
+//     userId = 0,
+//     uploadTime = "",
+//     liked = false,
+//     imageId = []
+//   ) {}
+// }
 const name = "posts";
-const initialState = { posts: [], initCounter: 0 };
-
-export const unlikePost = createAsyncThunk(
-  `${name}/unlikePost`,
-  async (id, thunkAPI) => {
-    try {
-      const res = await axios.put(
-        `${domain}/api/post/unlike/${id}`,
-        {},
-        { headers: { Authorization: thunkAPI.getState().user.token } }
-      );
-      return id;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-  }
-);
-
-export const likePost = createAsyncThunk(
-  `${name}/likePost`,
-  async (id, thunkAPI) => {
-    try {
-      const res = await axios.put(
-        `${domain}/api/post/like/${id}`,
-        {},
-        { headers: { Authorization: thunkAPI.getState().user.token } }
-      );
-      return id;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-  }
-);
+const initialState = { posts: [] };
 
 export const addPost = createAsyncThunk(
   `${name}/addPost`,
@@ -51,7 +32,7 @@ export const addPost = createAsyncThunk(
         content,
         id: thunkAPI.getState().posts.posts[0]?.id + 1,
         likes: 0,
-        userId: thunkAPI.getState().user.data.id,
+        userId: user.id,
         uploadTime: new Date().toISOString(),
       };
       const formData = new FormData();
@@ -60,19 +41,20 @@ export const addPost = createAsyncThunk(
         new Blob([JSON.stringify(dto)], { type: "application/json" })
       );
       if (!ufile) {
-        const res = await axios.post(`${domain}/api/post/upload`, formData, {
-          headers: {
-            Authorization: thunkAPI.getState().user.token,
-          },
-        });
+        await axios.post(
+          `${domain}/api/post/upload`,
+          formData,
+          createHeaders()
+        );
       } else {
         formData.append("files", ufile);
-        const res = await axios.post(`${domain}/api/post/upload`, formData, {
-          headers: {
-            Authorization: thunkAPI.getState().user.token,
-          },
-        });
+        await axios.post(
+          `${domain}/api/post/upload`,
+          formData,
+          createHeaders()
+        );
       }
+
       let newUFile = "";
       if (ufile) newUFile = URL.createObjectURL(ufile);
 
@@ -91,16 +73,152 @@ export const addPost = createAsyncThunk(
   }
 );
 
+export const comment = createAsyncThunk(
+  `${name}/comment`,
+  async (comment, thunkAPI) => {
+    try {
+      const comments = thunkAPI
+        .getState()
+        .posts.posts.find((post) => post.id === comment.postId).comments;
+
+      const commentDto = {
+        content: comment.content,
+        id: 0,
+        postId: comment.postId,
+        uploadTime: "2021-05-14T11:30:02.786Z",
+        userId: comment.userId,
+      };
+
+      const { data: id } = await axios.post(
+        `${domain}/api/comment`,
+        commentDto,
+        createHeaders()
+      );
+      return { ...commentDto, userInfo: thunkAPI.getState().user.data, id };
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
+export const unlikePost = createAsyncThunk(
+  `${name}/unlikePost`,
+  async (id, thunkAPI) => {
+    try {
+      await axios.put(`${domain}/api/post/unlike/${id}`, {}, createHeaders());
+      return id;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
+);
+
+export const likePost = createAsyncThunk(
+  `${name}/likePost`,
+  async (id, thunkAPI) => {
+    try {
+      await axios.put(`${domain}/api/post/like/${id}`, {}, createHeaders());
+      return id;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
+);
+
 export const getPost = createAsyncThunk(
   `${name}/getPost`,
-  async ({ ISOString, token }, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const res = await axios.get(`${domain}/api/post`, {
-        headers: { Authorization: token },
+      const ISOString = getISOStringNow();
+      const headers = createHeaders();
+
+      let { data: posts } = await axios.get(`${domain}/api/post`, {
+        ...headers,
         params: { time: ISOString },
       });
 
-      return res.data;
+      // tạo một array chứa tất cả các unique userId.
+      const userIds = [];
+      posts.forEach((post) => {
+        if (userIds.indexOf(post.userId) === -1) {
+          userIds.push(post.userId);
+        }
+      });
+
+      // fetch userInfo từ tất cả uniqueId
+      let userProfiles = await Promise.all(
+        userIds.map(async (userId) => {
+          return axios.get(`${domain}/api/user/${userId}`, headers);
+        })
+      );
+
+      // fetch user avatar về
+      userProfiles = await Promise.all(
+        userProfiles.map(async ({ data: userProfile }) => {
+          let avatarSrc = "";
+          if (userProfile.avatar) {
+            const res = await axios.get(
+              `${domain}/api/image/${userProfile.avatar}`,
+              {
+                responseType: "blob",
+                ...headers,
+              }
+            );
+            avatarSrc = URL.createObjectURL(res.data);
+          }
+          return { ...userProfile, avatarSrc };
+        })
+      );
+      // gán userInfo vào từng post
+      posts.forEach(
+        (post) =>
+          (post.userInfo = userProfiles.find((user) => user.id === post.userId))
+      );
+
+      // đã có tất cả các posts
+      for (let post of posts) {
+        // lấy hình của từng post
+        if (post.imageId.length) {
+          const res = await axios.get(
+            `${domain}/api/image/${post.imageId[0]}`,
+            {
+              responseType: "blob",
+              ...headers,
+            }
+          );
+          const imgSrc = URL.createObjectURL(res.data);
+
+          // gán image src vào post
+          post.imgSrc = imgSrc;
+        }
+        // Lấy comment của từng post
+        let { data: comments } = await axios.get(
+          `${domain}/api/comment/${post.id}`,
+          headers
+        );
+        // fetch tất cả userinfo
+        for (const comment of comments) {
+          let { data: commentUserInfo } = await axios.get(
+            `${domain}/api/user/${comment.userId}`,
+            headers
+          );
+          const { data: avatarImg } = await axios.get(
+            `${domain}/api/image/${commentUserInfo.avatar}`,
+            {
+              ...headers,
+              responseType: "blob",
+            }
+          );
+          const avatarSrc = URL.createObjectURL(avatarImg);
+          commentUserInfo.avatarSrc = avatarSrc;
+          comment.userInfo = commentUserInfo;
+        }
+        post.comments = comments;
+      }
+
+      return posts;
     } catch (err) {
       console.log("getPost error:", err);
 
@@ -111,56 +229,67 @@ export const getPost = createAsyncThunk(
 
 export const getProfilePost = createAsyncThunk(
   `${name}/getProfilePost`,
-  async (id, thunkAPI) => {
+  async (profile, thunkAPI) => {
     try {
-      const res = await axios.get(`${domain}/api/post/${id}`, {
-        headers: { Authorization: thunkAPI.getState().user.token },
-      });
+      const headers = createHeaders();
 
-      //userInfo
-      res.data = res.data.map((post) => ({
-        ...post,
-        userInfo: thunkAPI.getState().user.profile,
-      }));
-      return res.data;
+      let { data: posts } = await axios.get(
+        `${domain}/api/post/${profile.id}`,
+        {
+          ...headers,
+        }
+      );
+
+      // đã có tất cả các posts
+      for (let post of posts) {
+        // lấy hình của từng post
+        if (post.imageId.length) {
+          const res = await axios.get(
+            `${domain}/api/image/${post.imageId[0]}`,
+            {
+              responseType: "blob",
+              ...headers,
+            }
+          );
+          const imgSrc = URL.createObjectURL(res.data);
+
+          // gán image src vào post
+          post.imgSrc = imgSrc;
+        }
+        // Lấy comment của từng post
+        let { data: comments } = await axios.get(
+          `${domain}/api/comment/${post.id}`,
+          headers
+        );
+        // fetch 1 userinfo về trước để khè thôi
+        if (comments.length) {
+          let { data: commentUserInfo } = await axios.get(
+            `${domain}/api/user/${comments[0].userId}`,
+            headers
+          );
+          const { data: avatarImg } = await axios.get(
+            `${domain}/api/image/${commentUserInfo.avatar}`,
+            {
+              ...headers,
+              responseType: "blob",
+            }
+          );
+          const avatarSrc = URL.createObjectURL(avatarImg);
+          commentUserInfo.avatarSrc = avatarSrc;
+          comments[0].userInfo = commentUserInfo;
+          post.comments = comments;
+        }
+      }
+
+      // gán userInfo vào từng post
+      posts.forEach((post) => (post.userInfo = profile));
+
+      return posts;
     } catch (err) {
-      console.log(err);
+      console.log("getPost error:", err);
+
       return [];
     }
-  }
-);
-
-export const getPostUserInfo = createAsyncThunk(
-  `${name}/getPostUserInfo`,
-  async (post, thunkAPI) => {
-    const user = thunkAPI.getState().user;
-    if (user.data.id === post.userId) {
-      return { post, data: user.data };
-    }
-    const res = await axios.get(`${domain}/api/user/${post.userId}`, {
-      headers: { Authorization: user.token },
-    });
-    return { post, data: res.data };
-  }
-);
-
-export const getPostUserAvatar = createAsyncThunk(
-  `${name}/getPostUserAvatar`,
-  async ({ post }, thunkAPI) => {
-    const { userInfo } = post;
-    const res = await avatarFetch(userInfo.avatar, thunkAPI);
-    return { post, avatarSrc: res };
-  }
-);
-
-export const fetchPostImage = createAsyncThunk(
-  `${name}/fetchPostImage`,
-  async ({ postId, avatarId }, thunkAPI) => {
-    if (avatarId) {
-      const imgSrc = await avatarFetch(avatarId, thunkAPI);
-      return { postId, imgSrc };
-    }
-    return "";
   }
 );
 
@@ -175,6 +304,12 @@ export const postsSlice = createSlice({
   extraReducers: {
     [addPost.fulfilled]: (state, action) => {
       state.posts.unshift(action.payload);
+    },
+    [comment.fulfilled]: (state, action) => {
+      const post = state.posts.find(
+        (post) => post.id === action.payload.postId
+      );
+      post.comments.unshift(action.payload);
     },
     [likePost.fulfilled]: (state, action) => {
       if (action.payload) {
@@ -197,31 +332,12 @@ export const postsSlice = createSlice({
     [getPost.fulfilled]: (state, action) => {
       state.posts = action.payload;
     },
-    [getPostUserInfo.fulfilled]: (state, action) => {
-      ++state.initCounter;
-      const index = state.posts.findIndex(
-        (post) => post.id === action.payload.post.id
-      );
-      const newPost = { ...state.posts[index], userInfo: action.payload.data };
-      state.posts.splice(index, 1, newPost);
-    },
-    [getPostUserAvatar.fulfilled]: (state, action) => {
-      ++state.initCounter;
-      const { avatarSrc, post } = action.payload;
-      const newPost = { ...post, userInfo: { ...post.userInfo, avatarSrc } };
-      const index = state.posts.findIndex((p) => p.id === post.id);
-      state.posts.splice([index], 1, newPost);
-    },
     [getProfilePost.fulfilled]: (state, action) => {
       state.posts = action.payload;
     },
-    [fetchPostImage.fulfilled]: (state, action) => {
-      ++state.initCounter;
-      const { postId, imgSrc } = action.payload;
-      const post = state.posts.find((post) => post.id === postId);
-      if (post) post.imgSrc = imgSrc;
-    },
   },
 });
+
+export const { logout } = postsSlice.actions;
 
 export default postsSlice.reducer;
