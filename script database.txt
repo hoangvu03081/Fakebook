@@ -1,0 +1,128 @@
+create table chatroom
+(
+    id       bigint auto_increment
+        primary key,
+    is_group bit          null,
+    name     varchar(255) null
+);
+
+create table chat_message
+(
+    id              bigint auto_increment
+        primary key,
+    chatroom_id     bigint       null,
+    content         varchar(255) null,
+    local_date_time datetime     null,
+    recipient_id    bigint       null,
+    sender_id       bigint       null,
+    constraint FKmlidoym7rb1j9cv1a1hykqtn
+        foreign key (chatroom_id) references chatroom (id)
+);
+
+create table image
+(
+    id       bigint auto_increment
+        primary key,
+    location varchar(255) null
+);
+
+create table test
+(
+    id       int auto_increment
+        primary key,
+    content  varchar(255) null,
+    username varchar(255) null
+);
+
+create table user
+(
+    id       bigint auto_increment
+        primary key,
+    avatar   varchar(255) null,
+    dob      date         null,
+    email    varchar(255) null,
+    name     varchar(255) null,
+    password varchar(255) null,
+    username varchar(255) null
+);
+
+create table chat_participant
+(
+    user_id     bigint not null,
+    chatroom_id bigint not null,
+    primary key (user_id, chatroom_id),
+    constraint FK6qpr19gexqn6cfmgxj092q7qk
+        foreign key (chatroom_id) references chatroom (id),
+    constraint FKj5uagkg4rkuuabepnkvsairma
+        foreign key (user_id) references user (id)
+);
+
+create table follow
+(
+    follower_id bigint not null,
+    target_id   bigint not null,
+    primary key (follower_id, target_id),
+    constraint FKhjnjw85swlbgohpy3advuojwd
+        foreign key (target_id) references user (id),
+    constraint FKmow2qk674plvwyb4wqln37svv
+        foreign key (follower_id) references user (id)
+);
+
+create table friendship
+(
+    receiver_id  bigint not null,
+    requester_id bigint not null,
+    status       int    not null,
+    primary key (receiver_id, requester_id),
+    constraint FKhagc4skjpj084me05pdscgxhc
+        foreign key (receiver_id) references user (id),
+    constraint FKs6abgeydylxt8br7f3ttlk2q5
+        foreign key (requester_id) references user (id)
+);
+
+create table post
+(
+    id          bigint auto_increment
+        primary key,
+    content     varchar(255) null,
+    likes       int          not null,
+    upload_time datetime     null,
+    user_id     bigint       null,
+    constraint FK72mt33dhhs48hf9gcqrq4fxte
+        foreign key (user_id) references user (id)
+);
+
+create table comment
+(
+    id          bigint auto_increment
+        primary key,
+    content     varchar(255) null,
+    post_id     bigint       null,
+    upload_time datetime     null,
+    user_id     bigint       null,
+    constraint FK8kcum44fvpupyw6f5baccx25c
+        foreign key (user_id) references user (id),
+    constraint FKs1slvnkuemjsq2kj4h3vhx7i1
+        foreign key (post_id) references post (id)
+);
+
+create table post_image
+(
+    id      bigint not null
+        primary key,
+    post_id bigint null,
+    constraint FKsip7qv57jw2fw50g97t16nrjr
+        foreign key (post_id) references post (id)
+);
+
+create table post_like
+(
+    student_id bigint not null,
+    post_id    bigint not null,
+    primary key (student_id, post_id),
+    constraint FKcnqan70wkriwk3wape12rq521
+        foreign key (student_id) references user (id),
+    constraint FKj7iy0k7n3d0vkh8o7ibjna884
+        foreign key (post_id) references post (id)
+);
+

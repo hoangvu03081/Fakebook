@@ -21,7 +21,7 @@ public class CorsConfig {
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("http://production.url");
+        config.addAllowedOriginPattern("*");
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
