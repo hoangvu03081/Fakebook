@@ -49,12 +49,14 @@ public class ImageServiceImpl implements ImageService {
         this.userRepository=userRepository;
         this.postImageRepository=postImageRepository;
 
-        StorageOptions storageOptions = StorageOptions.newBuilder()
-                .setProjectId(projectId)
-                .setCredentials(GoogleCredentials.fromStream(new
-                        FileInputStream("google-credentials.json"))).build();
+//        StorageOptions storageOptions = StorageOptions.newBuilder()
+//                .setProjectId(projectId)
+//                .setCredentials(GoogleCredentials.fromStream(new
+//                        FileInputStream("google-credentials.json"))).build();
+//
+//        storage = storageOptions.getService();
 
-        storage = storageOptions.getService();
+        storage = StorageOptions.getDefaultInstance().getService();
     }
 
     public Optional<String> getExtensionByStringHandling(String filename) {
