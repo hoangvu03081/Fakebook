@@ -52,7 +52,7 @@ public class ImageServiceImpl implements ImageService {
         StorageOptions storageOptions = StorageOptions.newBuilder()
                 .setProjectId(projectId)
                 .setCredentials(GoogleCredentials.fromStream(new
-                        FileInputStream("fakebook-a6d3a-a3f106dc27ea.json"))).build();
+                        FileInputStream("google-credentials.json"))).build();
 
         storage = storageOptions.getService();
     }
