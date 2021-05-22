@@ -46,6 +46,7 @@ export const isValidToken = createAsyncThunk(
           responseType: "blob",
           ...headers,
         });
+
         avatarSrc = URL.createObjectURL(res.data);
       }
       // if valid return data to state
@@ -182,6 +183,7 @@ export const logout = createAsyncThunk("user/logout", async (_, thunkAPI) => {
   thunkAPI.dispatch(friendsSlice.actions.logout());
   history.push("/login");
 });
+
 
 const userSlice = createSlice({
   name: "user",

@@ -21,7 +21,7 @@ import { getISOStringNow } from "../../configs/normalizeFunc";
 //   ) {}
 // }
 const name = "posts";
-const initialState = { posts: [] };
+const initialState = { posts: [], profilePosts: [] };
 
 export const addPost = createAsyncThunk(
   `${name}/addPost`,
@@ -333,7 +333,7 @@ export const postsSlice = createSlice({
       state.posts = action.payload;
     },
     [getProfilePost.fulfilled]: (state, action) => {
-      state.posts = action.payload;
+      state.profilePosts = action.payload;
     },
   },
 });

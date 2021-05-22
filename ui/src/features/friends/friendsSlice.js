@@ -91,11 +91,17 @@ export const getFriendList = createAsyncThunk(
 
       friendList = await Promise.all(
         friendList.map(async (friend) => {
-          const res = await axios.get(`${domain}/api/image/${friend.avatar}`, {
-            responseType: "blob",
-            ...headers,
-          });
-          const avatarSrc = URL.createObjectURL(res.data);
+          let avatarSrc = "";
+          if (friend.avatar) {
+            const res = await axios.get(
+              `${domain}/api/image/${friend.avatar}`,
+              {
+                responseType: "blob",
+                ...headers,
+              }
+            );
+            avatarSrc = URL.createObjectURL(res.data);
+          }
           return { ...friend, avatarSrc };
         })
       );
@@ -168,7 +174,7 @@ export const getRequests = createAsyncThunk(
             );
             avatarSrc = URL.createObjectURL(res.data);
           }
-          return {...friend, avatarSrc};
+          return { ...friend, avatarSrc };
         })
       );
 

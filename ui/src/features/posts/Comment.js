@@ -9,6 +9,7 @@ export default function Comment({ comments, show, postId, userId }) {
   const user = useSelector((state) => state.user.data);
   const [comment, setComment] = useState("");
   const [expand, setExpand] = useState(false);
+  if (!comments) return null;
   const userComment = () => (
     <div className="d-flex">
       {user.avatarSrc ? (
@@ -108,12 +109,12 @@ export default function Comment({ comments, show, postId, userId }) {
   // expand = false => minify
   return (
     <div className="py-2 px-3">
-      {comments.length > 2 && !expand ? (
+      {comments.length > 1 && !expand ? (
         <span
           className="text-secondary font-weight-bold stat ml-1"
           onClick={() => setExpand(true)}
         >
-          See more {comments.length - 2} comments
+          See more {comments.length - 1} comments
         </span>
       ) : null}
       {show ? (expand ? renderComment() : renderRelevant()) : null}

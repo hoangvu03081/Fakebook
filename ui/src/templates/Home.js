@@ -12,7 +12,7 @@ export default function Home({ Component, ...props }) {
   // check for first time users go to page or check for valid token login
   // if don't valid then dispatch a function to check for valid again
   useEffect(() => {
-  dispatch(isValidToken());
+    dispatch(isValidToken());
   }, []);
 
   if (!localStorage.getItem(token)) {

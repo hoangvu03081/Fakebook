@@ -12,7 +12,7 @@ import {
   unfriend,
 } from "./friends/friendsSlice";
 import { getProfilePost, logout } from "./posts/postsSlice";
-import { getProfile } from "./user/userSlice";
+import { getProfile, clearProfile } from "./user/userSlice";
 import Posts from "./posts/Posts";
 
 const Button = ({ content, onClick, type }) => {
@@ -81,7 +81,7 @@ const Profile = function Profile(props) {
   const friends = useSelector((state) => state.friends.friends);
   const requests = useSelector((state) => state.friends.requests);
   const sentRequests = useSelector((state) => state.friends.sentRequests);
-  const posts = useSelector((state) => state.posts.posts);
+  const posts = useSelector((state) => state.posts.profilePosts);
 
   useEffect(() => {
     if (profile.id) dispatch(getProfilePost(profile));
@@ -95,7 +95,10 @@ const Profile = function Profile(props) {
   }, [id]);
 
   useEffect(() => {
-    return () => dispatch(logout());
+    return () => {
+      dispatch(logout());
+      dispatch(clearProfile());
+    };
   }, []);
 
   return (
